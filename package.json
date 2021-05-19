@@ -20,6 +20,9 @@
   "homepage": "https://github.com/foxspb2012/1313957-typoteka-3#readme",
   "devDependencies": {
     "eslint": "7.25.0",
-    "eslint-config-htmlacademy": "^0.6.0"
+    "eslint-config-htmlacademy": "0.6.0"
+  },
+  "dependencies": {
+    "chalk": "3.0.0"
   }
 }
