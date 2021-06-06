@@ -13,7 +13,7 @@ const FILE_CATEGORIES_PATH = `./data/categories.txt`;
 const readContent = async (filePath) => {
   try {
     const content = await fs.readFile(filePath, `utf8`);
-    return content.split(`\n`);
+    return content.trim().split(`\n`);
   } catch (err) {
     console.error(chalk.red(err));
     return [];
@@ -41,8 +41,8 @@ module.exports = {
   name: `--generate`,
   async run(args) {
     const titles = await readContent(FILE_TITLES_PATH);
-    const publications= await readContent(FILE_PUBLICATIONS_PATH);
-    const categories= await readContent(FILE_CATEGORIES_PATH);
+    const publications = await readContent(FILE_PUBLICATIONS_PATH);
+    const categories = await readContent(FILE_CATEGORIES_PATH);
 
     const [count] = args;
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
