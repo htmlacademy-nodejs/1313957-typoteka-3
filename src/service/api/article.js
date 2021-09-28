@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const articleValidator = require(`../middlewares/article-validator`);
 
-module.exports = (app, articleService, commentService) => {
+module.exports = (app, articleService) => {
   const route = new Router();
 
   app.use(`/articles`, route);

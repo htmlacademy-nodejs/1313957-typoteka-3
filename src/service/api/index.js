@@ -21,7 +21,7 @@ const getRouter = async () => {
 
   category(router, new CategoryService(mockData));
   search(router, new SearchService(mockData));
-  article(router, new ArticleService(mockData), new CommentService);
+  article(router, new ArticleService(mockData));
   comment(router, new ArticleService(mockData), new CommentService);
 
   return router;
