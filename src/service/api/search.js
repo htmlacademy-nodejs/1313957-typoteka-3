@@ -9,16 +9,16 @@ module.exports = (app, service) => {
 
   route.get(`/`, (req, res) => {
     const {query = ``} = req.query;
-  if(!query) {
-    res.status(HttpCode.BAD_REQUEST)
-      .json([]);
-    return
-  }
+    if (!query) {
+      res.status(HttpCode.BAD_REQUEST)
+        .json([]);
+      return;
+    }
 
-  const searchResults = service.findAll(query);
-  const searchStatus = searchResults.length > 0 ? HttpCode.OK : HttpCode.NOT_FOUND;
+    const searchResults = service.findAll(query);
+    const searchStatus = searchResults.length > 0 ? HttpCode.OK : HttpCode.NOT_FOUND;
 
-  res.status(searchStatus)
-    .json(searchResults);
+    res.status(searchStatus)
+      .json(searchResults);
   });
 };

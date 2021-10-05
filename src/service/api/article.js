@@ -20,7 +20,7 @@ module.exports = (app, articleService) => {
 
     if (!article) {
       return res.status(HttpCode.NOT_FOUND)
-        .send(`Not found with ${articleId}`)
+        .send(`Not found with ${articleId}`);
     }
 
     return res.status(HttpCode.OK)
@@ -30,7 +30,7 @@ module.exports = (app, articleService) => {
   route.post(`/`, articleValidator, (req, res) => {
     const article = articleService.create(req.body);
 
-    return res.status(HttpCode.OK)
+    return res.status(HttpCode.CREATED)
       .json(article);
   });
 
@@ -61,4 +61,4 @@ module.exports = (app, articleService) => {
     return res.status(HttpCode.OK)
       .json(article);
   });
-}
+};

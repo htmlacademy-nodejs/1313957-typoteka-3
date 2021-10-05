@@ -1,11 +1,11 @@
-`use strict`;
+'use strict';
 
 const {nanoid} = require(`nanoid`);
 const {MAX_ID_LENGTH} = require(`../../constants`);
 
 class CommentService {
   create(article, comment) {
-    const newComment = Object.assign( {
+    const newComment = Object.assign({
       id: nanoid(MAX_ID_LENGTH),
     }, comment);
 
@@ -17,7 +17,7 @@ class CommentService {
     const dropComment = article.comments
       .find((item) => item.id === commentId);
 
-    if(!dropComment) {
+    if (!dropComment) {
       return null;
     }
 
