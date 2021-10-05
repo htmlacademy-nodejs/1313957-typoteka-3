@@ -40,4 +40,4 @@ module.exports = (app, articleService, commentService) => {
     return res.status(HttpCode.CREATED)
       .json(comment);
   });
-}
+};

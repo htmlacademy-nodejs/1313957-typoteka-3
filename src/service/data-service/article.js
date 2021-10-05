@@ -19,12 +19,12 @@ class ArticleService {
   drop(id) {
     const article = this._articles.find((item) => item.id === id);
 
-  if(!article) {
-    return null;
-  }
+    if (!article) {
+      return null;
+    }
 
-  this._articles = this._articles.filter((item) => item.id !== id);
-  return article;
+    this._articles = this._articles.filter((item) => item.id !== id);
+    return article;
   }
 
   findAll() {
@@ -37,7 +37,7 @@ class ArticleService {
 
   update(id, article) {
     const oldArticle = this._articles
-      .find((item) => item.id ==id);
+      .find((item) => item.id === id);
 
     return Object.assign(oldArticle, article);
   }
