@@ -151,7 +151,7 @@ const app = express();
 app.use(express.json());
 search(app, new DataService(mockData));
 
-describe(`API returns offer based on search qurey`, () => {
+describe(`API returns article based on search qurey`, () => {
   let response;
 
   beforeAll(async () => {
@@ -164,9 +164,9 @@ describe(`API returns offer based on search qurey`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`1 offer found`, () => expect(response.body.length).toBe(1));
+  test(`1 article found`, () => expect(response.body.length).toBe(1));
 
-  test(`Offer had correct id`, () => expect(response.body[0].id).toBe(`3VG2aW`));
+  test(`Frticle had correct id`, () => expect(response.body[0].id).toBe(`3VG2aW`));
 
 });
 

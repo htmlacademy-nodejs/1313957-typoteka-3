@@ -156,7 +156,7 @@ const createAPI = () => {
   return app;
 };
 
-describe(`API returns a list of comment to given offer`, () => {
+describe(`API returns a list of comment to given article`, () => {
 
   const app = createAPI();
 
@@ -200,7 +200,7 @@ describe(`API creates a comment if data is valid`, () => {
 
 });
 
-test(`API refuses to create a comment to non-existent offer and returns status code 404`, () => {
+test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
 
   const app = createAPI();
 
