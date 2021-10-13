@@ -27,8 +27,12 @@ const upload = multer({storage});
 articlesRouter.get(`/category/:id`, (req, res) => res.render(`articles/articles-by-category`));
 
 articlesRouter.get(`/add`, async (req, res) => {
-  const categories = await api.getCategories();
-  res.render(`articles/post-new`, {categories});
+  try {
+    const categories = await api.getCategories();
+    res.render(`articles/post-new`, {categories});
+  } catch (error) {
+    res.render(`errors/400`);
+  }
 });
 
 articlesRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
@@ -51,15 +55,18 @@ articlesRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
 });
 
 articlesRouter.get(`/edit/:id`, async (req, res) => {
-    const {id} = req.params;
+  const {id} = req.params;
+  try {
     const [article, categories] = await Promise.all([
-        await api.getArticle(id),
-        await api.getCategories()
+      await api.getArticle(id),
+      await api.getCategories()
     ]);
 
     res.render(`articles/post-edit`, {article, categories});
+  } catch (error) {
+    res.render(`errors/400`);
   }
-);
+});
 
 articlesRouter.get(`/:id`, (req, res) => res.render(`articles/post`));
 

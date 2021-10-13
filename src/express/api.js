@@ -11,7 +11,7 @@ class API {
     this._http = axios.create({
       baseURL,
       timeout
-    })
+    });
   }
 
   async _load(url, options) {
@@ -31,11 +31,11 @@ class API {
     return this._load(`/search`, {params: {query}});
   }
 
-  async getCategories() {
+  getCategories() {
     return this._load(`/category`);
   }
 
-  async createArticle(data) {
+  createArticle(data) {
     return this._load(`/articles`, {
       method: `POST`,
       data
