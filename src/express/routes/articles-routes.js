@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
-const {ensureArray} = require(`../../utils`);
+const {fillArrayCategories} = require(`../../utils`);
 
 const UPLOAD_DIR = `../upload/img/`;
 
@@ -43,7 +43,7 @@ articlesRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
     createdDate: body.date,
     announce: body.announcement,
     fulltext: body[`full-text`],
-    category: ensureArray(body.category),
+    category: fillArrayCategories(body, `on`),
   };
 
   try {
