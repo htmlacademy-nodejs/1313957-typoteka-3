@@ -1,28 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
-const multer = require(`multer`);
-const path = require(`path`);
-const {nanoid} = require(`nanoid`);
-const {ensureArray} = require(`../../utils`);
-
-const UPLOAD_DIR = `../upload/img/`;
-
-const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
-
 const api = require(`../api`).getAPI();
+const {ensureArray} = require(`../../utils`);
+const upload = require(`../../service/middlewares/multer-upload`);
+
 const articlesRouter = new Router();
-
-const storage = multer.diskStorage({
-  destination: uploadDirAbsolute,
-  filename: (req, file, cb) => {
-    const uniqueName = nanoid(10);
-    const extension = file.originalname.split(`.`).pop();
-    cb(null, `${uniqueName}.${extension}`);
-  }
-});
-
-const upload = multer({storage});
 
 articlesRouter.get(`/category/:id`, (req, res) => res.render(`articles/articles-by-category`));
 
@@ -35,14 +18,14 @@ articlesRouter.get(`/add`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
+articlesRouter.post(`/add`, upload.single(`upload`), async (req, res) => {
   const {body, file} = req;
   const articleData = {
     title: body.title,
     picture: file ? file.filename : ``,
     createdDate: body.date,
     announce: body.announcement,
-    fulltext: body[`full-text`],
+    fullText: body[`full-text`],
     category: ensureArray(body.category),
   };
 
