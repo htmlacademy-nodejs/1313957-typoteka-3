@@ -55,7 +55,7 @@ const generateOffers = (count, titles, publications, categories, comments) => (
     announce: shuffle(publications).slice(1, 5).join(` `),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
     fullText: shuffle(publications).slice(0, (getRandomInt(1, publications.length))).join(` `),
-    category: shuffle(categories).slice(0, (getRandomInt(1, categories.length))).join(`,`).split(`,`),
+    category: shuffle(categories).slice(0, (getRandomInt(1, 3))).join(`,`).split(`,`),
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
   }))
 );

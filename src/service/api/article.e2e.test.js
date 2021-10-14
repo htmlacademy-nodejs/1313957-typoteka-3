@@ -155,7 +155,7 @@ const createAPI = () => {
   return app;
 };
 
-describe(`API returns a list of all offers`, () => {
+describe(`API returns a list of all articles`, () => {
 
   const app = createAPI();
 
@@ -170,7 +170,7 @@ describe(`API returns a list of all offers`, () => {
 
   test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
 
-  test(`First offer's id equals "B7pVD5"`, () => expect(response.body[0].id).toBe(`B7pVD5`));
+  test(`First article's id equals "B7pVD5"`, () => expect(response.body[0].id).toBe(`B7pVD5`));
 
 });
 
@@ -190,7 +190,7 @@ describe(`API returns an article with given id`, () => {
 
 });
 
-describe(`API creates an offer if data is valid`, () => {
+describe(`API creates an article if data is valid`, () => {
 
   const newArticle = {
     title: `Как достигнуть успеха не вставая с кресла`,
@@ -292,7 +292,7 @@ test(`API returns a 404 status code when trying to change a non-existent article
 
 });
 
-test(`API returns status code 400 when trying to change an offer with invalid data`, () => {
+test(`API returns status code 400 when trying to change an article with invalid data`, () => {
 
   const app = createAPI();
 
@@ -310,7 +310,7 @@ test(`API returns status code 400 when trying to change an offer with invalid da
 
 });
 
-describe(`API correctly deletes an offer`, () => {
+describe(`API correctly deletes an article`, () => {
 
   const app = createAPI();
 

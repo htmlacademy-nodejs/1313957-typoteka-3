@@ -10,6 +10,21 @@ head
   link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
   link(rel='stylesheet' href='/css/style.min.css')
 body.wrapper
+
+  mixin insertArticleImage(article)
+    img(src=`/img/${article.picture ? article.picture : 'blank.png'}` alt=article.title)
+
+  mixin insertSearchResult(result)
+    .search__result
+      time.search__date(datetime=`${result.createdDate}`) #{result.createdDate}
+      a.search__link
+        | #{result.title}
+
+  mixin insertCategory(category)
+    .new-publication__checkbox(class=`new-publication__checkbox--${category}`)
+      input(id=`checkbox-${category}`, type='checkbox', name='category', value=category)
+      label(for=`checkbox-${category}`) #{category}
+
   include partials/header.pug
   block content
   include partials/footer.pug

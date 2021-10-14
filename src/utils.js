@@ -20,3 +20,5 @@ module.exports.createRandomDate = (start) => {
   end.setMonth(start.getMonth() - 3);
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toLocaleString();
 };
+
+module.exports.ensureArray = (value) => Array.isArray(value) ? value : [value];
