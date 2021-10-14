@@ -21,9 +21,9 @@ body.wrapper
         | #{result.title}
 
   mixin insertCategory(category)
-    .new-publication__checkbox.new-publication__checkbox--auto
-      input#checkbox-auto(type='checkbox', name=`${category}`)
-      label(for='checkbox-auto') #{category}
+    .new-publication__checkbox(class=`new-publication__checkbox--${category}`)
+      input(id=`checkbox-${category}`, type='checkbox', name='category', value=category)
+      label(for=`checkbox-${category}`) #{category}
 
   include partials/header.pug
   block content

@@ -21,13 +21,4 @@ module.exports.createRandomDate = (start) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toLocaleString();
 };
 
-module.exports.fillArrayCategories = (object, select) => {
-  const categories = [];
-  const Arr = Object.entries(object);
-  Arr.forEach(([key, value]) => {
-    if (value === select) {
-      categories.push(key);
-    }
-  });
-  return categories;
-};
+module.exports.ensureArray = (value) => Array.isArray(value) ? value : [value];
