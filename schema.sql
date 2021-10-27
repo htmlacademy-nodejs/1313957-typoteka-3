@@ -22,21 +22,24 @@ CREATE TABLE categories
 
 CREATE TABLE articles
 (
-  id           integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  title        varchar(255) NOT NULL,
-  created_at   timestamp DEFAULT CURRENT_TIMESTAMP,
-  category_id  integer      NOT NULL,
-  picture      varchar(15),
-  article_text text         NOT NULL
+  id          integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  user_id     integer      NOT NULL,
+  title       varchar(255) NOT NULL,
+  created_at  timestamp DEFAULT CURRENT_TIMESTAMP,
+  category_id integer      NOT NULL,
+  picture     varchar(15),
+  announce    varchar(255) NOT NULL,
+  text        text         NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE comments
 (
-  id           integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  comment_text text    NOT NULL,
-  created_at   timestamp DEFAULT CURRENT_TIMESTAMP,
-  user_id      integer NOT NULL,
-  article_id   integer NOT NULL,
+  id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  text       text    NOT NULL,
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+  user_id    integer NOT NULL,
+  article_id integer NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (article_id) REFERENCES articles (id)
     ON DELETE CASCADE
