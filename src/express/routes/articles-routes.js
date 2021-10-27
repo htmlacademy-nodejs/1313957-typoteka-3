@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
 const {ensureArray} = require(`../../utils`);
-const upload = require(`../../service/middlewares/multer-upload`);
+const upload = require(`../middlewares/multer-upload`);
 
 const articlesRouter = new Router();
 
