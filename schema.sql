@@ -28,7 +28,6 @@ CREATE TABLE articles
   picture     varchar(15),
   announce    varchar(255) NOT NULL,
   text        text         NOT NULL,
-  category_id integer[]      NOT NULL,
   user_id     integer      NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id)
 );

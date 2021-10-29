@@ -104,8 +104,8 @@ module.exports = {
     const categoryValues = categories.map((name) => `('${name}')`).join(`,\n`);
 
     const articleValues = articles.map(
-        ({title, createdDate, picture, announce, text, categoryId, userId}) =>
-          `('${title}', '${createdDate}', '${picture}', '${announce}', '${text}', ARRAY[${categoryId}], '${userId}')`
+        ({title, createdDate, picture, announce, text, userId}) =>
+          `('${title}', '${createdDate}', '${picture}', '${announce}', '${text}', '${userId}')`
     ).join(`,\n`);
 
     const commentValues = comments.map(
@@ -124,7 +124,7 @@ module.exports = {
       INSERT INTO typoteka.public.categories(name) VALUES ${categoryValues};
 
       ALTER TABLE typoteka.public.articles DISABLE TRIGGER ALL;
-      INSERT INTO typoteka.public.articles(title, created_at, picture, announce, text, category_id, user_id) VALUES  ${articleValues};
+      INSERT INTO typoteka.public.articles(title, created_at, picture, announce, text, user_id) VALUES  ${articleValues};
       ALTER TABLE typoteka.public.articles ENABLE TRIGGER ALL;
 
       ALTER TABLE typoteka.public.comments DISABLE TRIGGER ALL;
