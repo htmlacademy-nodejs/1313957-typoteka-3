@@ -15,10 +15,15 @@ module.exports.shuffle = (someArray) => {
   return someArray;
 };
 
-module.exports.createRandomDate = (start) => {
+module.exports.createRandomDate = () => {
+
+  const moment = require(`moment`);
+  let start = new Date();
   let end = new Date();
+
   end.setMonth(start.getMonth() - 3);
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toLocaleString();
+  const createdDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return moment(createdDate).format(`YYYY.MM.DD, hh:mm:ss`);
 };
 
 module.exports.ensureArray = (value) => Array.isArray(value) ? value : [value];

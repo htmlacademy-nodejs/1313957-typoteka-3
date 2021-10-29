@@ -47,7 +47,7 @@ const PictureRestrict = {
 
 const getPictureFileName = (number) => `item${number.toString().padStart(2, `0`)}.jpg`;
 
-const generateOffers = (count, titles, publications, categories, comments) => (
+const generateArticles = (count, titles, publications, categories, comments) => (
   Array(count).fill({}).map(() => ({
     id: nanoid(MAX_ID_LENGTH),
     title: titles[getRandomInt(0, titles.length - 1)],
@@ -69,12 +69,13 @@ module.exports = {
     const comments = await readContent(FILE_COMMENTS_PATH);
 
     const [count] = args;
-    const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    if (countOffer > MAX_COUNT) {
+    const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
+
+    if (countArticle > MAX_COUNT) {
       console.error(chalk.yellow(`Не больше 1000 публикаций`));
       return;
     }
-    const content = JSON.stringify(generateOffers(countOffer, titles, publications, categories, comments), null, 2);
+    const content = JSON.stringify(generateArticles(countArticle, titles, publications, categories, comments), null, 2);
     try {
       await fs.writeFile(FILE_NAME, content);
       console.log(chalk.green(`Operation success. File created.`));
