@@ -100,12 +100,19 @@ ALTER TABLE typoteka.public.article_categories
   DISABLE TRIGGER ALL;
 INSERT INTO typoteka.public.article_categories
 VALUES (1, 5),
+       (1, 2),
        (2, 5),
        (3, 4),
+       (3, 1),
+       (3, 3),
        (4, 2),
+       (4, 4),
        (5, 2),
        (6, 2),
+       (6, 1),
        (7, 6),
+       (7, 3),
+       (7, 2),
        (8, 3),
        (9, 2),
        (10, 1);
