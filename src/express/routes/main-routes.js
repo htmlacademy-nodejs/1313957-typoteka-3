@@ -6,8 +6,15 @@ const api = require(`../api`).getAPI();
 const mainRouter = new Router();
 
 mainRouter.get(`/`, async (req, res) => {
-  const articles = await api.getArticles();
-  res.render(`main`, {articles});
+  const [
+    articles,
+    categories
+  ] = await Promise.all([
+    api.getArticles(),
+    api.getCategories(true) // опциональный аргумент
+  ]);
+
+  res.render(`main`, {articles, categories});
 });
 
 mainRouter.get(`/login`, (req, res) => res.render(`login`));

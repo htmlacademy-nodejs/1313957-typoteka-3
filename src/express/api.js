@@ -23,16 +23,16 @@ class API {
     return this._load(`/articles`);
   }
 
-  getArticle(id) {
-    return this._load(`/articles/${id}`);
+  getArticle(id, {comments}) {
+    return this._load(`/articles/${id}`, {params: {comments}});
   }
 
   search(query) {
     return this._load(`/search`, {params: {query}});
   }
 
-  getCategories() {
-    return this._load(`/category`);
+  getCategories(count) {
+    return this._load(`/category`, {params: {count}});
   }
 
   createArticle(data) {

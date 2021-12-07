@@ -2,47 +2,54 @@
 
 const express = require(`express`);
 const request = require(`supertest`);
+const Sequelize = require(`sequelize`);
 
+const initDB = require(`../lib/init-db`);
 const article = require(`./article`);
 const DataService = require(`../data-service/article`);
 
 const {HttpCode} = require(`../../constants`);
 
-const mockData = [
+const mockCategories = [
+  `Деревья`,
+  `За жизнь`,
+  `Без рамки`,
+  `Разное`,
+  `IT`,
+  `Музыка`,
+  `Кино`,
+  `Программирование`,
+  `Железо`
+];
+
+const mockArticles = [
   {
     "title": `Как достигнуть успеха не вставая с кресла`,
-    "createdDate": `05.07.2021, 11:28:56`,
     "announce": `Достичь успеха помогут ежедневные повторения. Альбом стал настоящим открытием года. Мощные гитарные рифы и скоростные соло-партии не дадут заскучать. Программировать не настолько сложно как об этом говорят. Простые ежедневные упражнения помогут достичь успеха.`,
     "picture": `item12.jpg`,
     "fullText": `Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин гармоническая пропорция. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Альбом стал настоящим открытием года. Мощные гитарные рифы и скоростные соло-партии не дадут заскучать. Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Программировать не настолько сложно как об этом говорят. Как начать действовать? Для начала просто соберитесь. Ёлки — это не просто красивое дерево. Это прочная древесина. Из под его пера вышло 8 платиновых альбомов. Достичь успеха помогут ежедневные повторения.`,
-    "id": `B7pVD5`,
-    "category": [
+    "categories": [
       `IT`,
       `Программирование`
     ],
     "comments": [
       {
-        "text": `Мне кажется или я уже читал это где-то? Планируете записать видосик на эту тему?`,
-        "id": `oKcluo`
+        "text": `Мне кажется или я уже читал это где-то? Планируете записать видосик на эту тему?`
       },
       {
-        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Согласен с автором! Планируете записать видосик на эту тему?`,
-        "id": `bmaKrz`
+        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Согласен с автором! Планируете записать видосик на эту тему?`
       },
       {
-        "text": `Планируете записать видосик на эту тему? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Совсем немного...`,
-        "id": `ReWoy8`
+        "text": `Планируете записать видосик на эту тему? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Совсем немного...`
       }
     ]
   },
   {
     "title": `Как собрать камни бесконечности`,
-    "createdDate": `11.07.2021, 17:32:00`,
     "announce": `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. Достичь успеха помогут ежедневные повторения. Как начать действовать? Для начала просто соберитесь.`,
     "picture": `item09.jpg`,
     "fullText": `Как начать действовать? Для начала просто соберитесь. Золотое сечение — соотношение двух величин гармоническая пропорция. Это один из лучших рок-музыкантов. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Программировать не настолько сложно как об этом говорят. Достичь успеха помогут ежедневные повторения. Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Простые ежедневные упражнения помогут достичь успеха. Он написал больше 30 хитов. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много.`,
-    "id": `vSouii`,
-    "category": [
+    "categories": [
       `Деревья`,
       `Кино`,
       `Без рамки`,
@@ -55,23 +62,19 @@ const mockData = [
     ],
     "comments": [
       {
-        "text": `Согласен с автором! Планируете записать видосик на эту тему? Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`,
-        "id": `EpA69Z`
+        "text": `Согласен с автором! Планируете записать видосик на эту тему? Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`
       },
       {
-        "text": `Хочу такую же футболку :-) Согласен с автором! Плюсую, но слишком много буквы!`,
-        "id": `4GXdBI`
+        "text": `Хочу такую же футболку :-) Согласен с автором! Плюсую, но слишком много буквы!`
       }
     ]
   },
   {
     "title": `Рок — это протест`,
-    "createdDate": `25.08.2021, 13:18:57`,
     "announce": `Программировать не настолько сложно как об этом говорят. Первая большая ёлка была установлена только в 1938 году. Собрать камни бесконечности легко если вы прирожденный герой. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами.`,
     "picture": `item05.jpg`,
     "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Это один из лучших рок-музыкантов. Первая большая ёлка была установлена только в 1938 году. Программировать не настолько сложно как об этом говорят. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. Достичь успеха помогут ежедневные повторения. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Из под его пера вышло 8 платиновых альбомов. Золотое сечение — соотношение двух величин гармоническая пропорция. Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете. Как начать действовать? Для начала просто соберитесь. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Альбом стал настоящим открытием года. Мощные гитарные рифы и скоростные соло-партии не дадут заскучать. Простые ежедневные упражнения помогут достичь успеха.`,
-    "id": `phmaLJ`,
-    "category": [
+    "categories": [
       `За жизнь`,
       `IT`,
       `Кино`,
@@ -82,86 +85,73 @@ const mockData = [
     ],
     "comments": [
       {
-        "text": `Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы! Это где ж такие красоты?`,
-        "id": `6rXz4Z`
+        "text": `Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы! Это где ж такие красоты?`
       },
       {
-        "text": `Согласен с автором! Совсем немного... Хочу такую же футболку :-)`,
-        "id": `WMdB4x`
+        "text": `Согласен с автором! Совсем немного... Хочу такую же футболку :-)`
       }
     ]
   },
   {
     "title": `Как достигнуть успеха не вставая с кресла`,
-    "createdDate": `18.07.2021, 00:11:01`,
     "announce": `Собрать камни бесконечности легко если вы прирожденный герой. Первая большая ёлка была установлена только в 1938 году. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. Из под его пера вышло 8 платиновых альбомов.`,
     "picture": `item11.jpg`,
     "fullText": `Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете. Это один из лучших рок-музыкантов. Альбом стал настоящим открытием года. Мощные гитарные рифы и скоростные соло-партии не дадут заскучать. Достичь успеха помогут ежедневные повторения. Из под его пера вышло 8 платиновых альбомов.`,
-    "id": `dzBUY3`,
-    "category": [
+    "categories": [
       `Музыка`
     ],
     "comments": [
       {
-        "text": `Хочу такую же футболку :-) Плюсую, но слишком много буквы! Это где ж такие красоты?`,
-        "id": `Y_mZLc`
+        "text": `Хочу такую же футболку :-) Плюсую, но слишком много буквы! Это где ж такие красоты?`
       },
       {
-        "text": `Мне кажется или я уже читал это где-то? Совсем немного...`,
-        "id": `2UJ4R7`
+        "text": `Мне кажется или я уже читал это где-то? Совсем немного...`
       },
       {
-        "text": `Согласен с автором!`,
-        "id": `Qtxb6-`
+        "text": `Согласен с автором!`
       }
     ]
   },
   {
     "title": `Что такое золотое сечение`,
-    "createdDate": `02.07.2021, 10:54:50`,
     "announce": `Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. Как начать действовать? Для начала просто соберитесь.`,
     "picture": `item06.jpg`,
     "fullText": `Простые ежедневные упражнения помогут достичь успеха. Первая большая ёлка была установлена только в 1938 году. Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике.`,
-    "id": `3VG2aW`,
-    "category": [
+    "categories": [
       `IT`
     ],
     "comments": [
       {
-        "text": `Плюсую, но слишком много буквы! Согласен с автором!`,
-        "id": `_cWCMo`
+        "text": `Плюсую, но слишком много буквы! Согласен с автором!`
       },
       {
-        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Хочу такую же футболку :-) Согласен с автором!`,
-        "id": `GOyWuK`
+        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Хочу такую же футболку :-) Согласен с автором!`
       },
       {
-        "text": `Это где ж такие красоты? Мне кажется или я уже читал это где-то?`,
-        "id": `p0k8zB`
+        "text": `Это где ж такие красоты? Мне кажется или я уже читал это где-то?`
       },
       {
-        "text": `Плюсую, но слишком много буквы! Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`,
-        "id": `hFGXUv`
+        "text": `Плюсую, но слишком много буквы! Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`
       }
     ]
   }
 ];
 
-const createAPI = () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
   const app = express();
-  const cloneData = JSON.parse(JSON.stringify(mockData));
   app.use(express.json());
-  article(app, new DataService(cloneData));
+  article(app, new DataService(mockDB));
   return app;
 };
 
 describe(`API returns a list of all articles`, () => {
 
-  const app = createAPI();
-
   let response;
 
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app)
       .get(`/articles`);
   });
@@ -170,18 +160,18 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
 
-  test(`First article's id equals "B7pVD5"`, () => expect(response.body[0].id).toBe(`B7pVD5`));
+  test(`First article's title  equals "Как достигнуть успеха не вставая с кресла"`, () => expect(response.body[0].title).toBe(`Как достигнуть успеха не вставая с кресла`));
 
 });
 
 describe(`API returns an article with given id`, () => {
 
-  const app = createAPI();
   let response;
 
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app)
-      .get(`/articles/vSouii`);
+      .get(`/articles/2`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
@@ -194,24 +184,22 @@ describe(`API creates an article if data is valid`, () => {
 
   const newArticle = {
     title: `Как достигнуть успеха не вставая с кресла`,
-    createdDate: `02.09.2021, 10:54:44`,
     announce: `Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
     picture: `item06.jpg`,
     fullText: `Простые ежедневные упражнения помогут достичь успеха. Первая большая ёлка была установлена только в 1938 году.`,
-    category: [`IT`, `Программирование`]
+    categories: [1, 2]
   };
-  const app = createAPI();
-  let response;
+
+  let app; let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
       .post(`/articles`)
       .send(newArticle);
   });
 
   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
-
-  test(`Returns articles created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
   test(`Articles count is changed`, () => request(app)
     .get(`/articles`)
@@ -224,12 +212,16 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
   const newArticle = {
     title: `Как достигнуть успеха не вставая с кресла`,
-    createdDate: `02.09.2021, 10:54:44`,
     announce: `Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
     fullText: `Простые ежедневные упражнения помогут достичь успеха. Первая большая ёлка была установлена только в 1938 году.`,
     category: [`IT`, `Программирование`]
   };
-  const app = createAPI();
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
@@ -248,63 +240,59 @@ describe(`API changed an existing article`, () => {
 
   const newArticle = {
     title: `Рок — это протест`,
-    createdDate: `05.10.2021, 10:54:44`,
     announce: `Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин гармоническая пропорция.`,
     fullText: `Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете.`,
-    category: [`Музыка`, `Кино`]
+    categories: [2],
   };
-  const app = createAPI();
-  let response;
+
+  let app; let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .put(`/articles/dzBUY3`)
+      .put(`/articles/2`)
       .send(newArticle);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Returns changed article`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
-
   test(`Article is really changed`, () => request(app)
-    .get(`/articles/dzBUY3`)
+    .get(`/articles/2`)
     .expect((res) => expect(res.body.title).toBe(`Рок — это протест`))
   );
 
 });
 
-test(`API returns a 404 status code when trying to change a non-existent article`, () => {
+test(`API returns a 404 status code when trying to change a non-existent article`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   const validArticle = {
-    title: `Это`,
-    createdDate: `валидный`,
+    title: `Это валидный`,
     announce: `объект`,
-    fullText: `публикации`,
-    category: `однако`
+    fullText: `публикации однако`,
+    categories: [3]
   };
 
   return request(app)
-    .put(`/articles/NOEXST`)
+    .put(`/articles/20`)
     .send(validArticle)
     .expect(HttpCode.NOT_FOUND);
 
 });
 
-test(`API returns status code 400 when trying to change an article with invalid data`, () => {
+test(`API returns status code 400 when trying to change an article with invalid data`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   const invalidArticle = {
-    title: `Это`,
-    createdDate: `невалидный`,
+    title: `Это невалидный`,
     announce: `объект`,
     fullText: `нет категорий`,
   };
 
   return request(app)
-    .put(`/articles/NOEXST`)
+    .put(`/articles/20`)
     .send(invalidArticle)
     .expect(HttpCode.BAD_REQUEST);
 
@@ -312,18 +300,15 @@ test(`API returns status code 400 when trying to change an article with invalid 
 
 describe(`API correctly deletes an article`, () => {
 
-  const app = createAPI();
-
-  let response;
+  let app; let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .delete(`/articles/phmaLJ`);
+      .delete(`/articles/1`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Returns deleted article`, () => expect(response.body.id).toBe(`phmaLJ`));
 
   test(`Article count is 2 now`, () => request(app)
     .get(`/articles`)
@@ -332,12 +317,12 @@ describe(`API correctly deletes an article`, () => {
 
 });
 
-test(`API refuses to delete non-existent articles`, () => {
+test(`API refuses to delete non-existent articles`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   return request(app)
-    .delete(`/articles/NOEXST`)
+    .delete(`/articles/20`)
     .expect(HttpCode.NOT_FOUND);
 
 });
