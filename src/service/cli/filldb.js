@@ -61,7 +61,7 @@ const getRandomSubarray = (items) => {
 const generateArticles = (count, titles, publications, categories, comments) => (
   Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
-    announce: shuffle(publications).slice(1, 5).join(` `),
+    announce: shuffle(publications).slice(1, 3).join(` `),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
     fullText: shuffle(publications).slice(0, (getRandomInt(1, publications.length))).join(` `),
     categories: getRandomSubarray(categories),
@@ -89,7 +89,10 @@ module.exports = {
     const [count] = args;
     const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const articles = generateArticles(countArticle, titles, publications, categories, comments);
-
-    return initDatabase(sequelize, {articles, categories});
+    try {
+      return initDatabase(sequelize, {articles, categories});
+    } catch (err) {
+      return logger.error(`An error occurred when filling in the database: ${err.message}`);
+    }
   }
 };

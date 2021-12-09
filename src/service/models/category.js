@@ -1,6 +1,7 @@
 'use strict';
 
 const {DataTypes, Model} = require(`sequelize`);
+const Aliase = require(`./aliase`);
 
 class Category extends Model {
 
@@ -17,4 +18,9 @@ const define = (sequelize) => Category.init({
   tableName: `categories`
 });
 
-module.exports = define;
+const defineRelations = ({Article, ArticleCategory, Category}) => {
+  Category.belongsToMany(Article, {through: ArticleCategory, as: Aliase.ARTICLES});
+  Category.hasMany(ArticleCategory, {as: Aliase.ARTICLE_CATEGORIES});
+};
+
+module.exports = {define, defineRelations};

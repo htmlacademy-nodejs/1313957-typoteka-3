@@ -17,4 +17,8 @@ const define = (sequelize) => Comment.init({
   tableName: `comments`
 });
 
-module.exports = define;
+const defineRelations = ({Article, Comment}) => {
+  Comment.belongsTo(Article, {foreignKey: `articleId`});
+};
+
+module.exports = {define, defineRelations};
