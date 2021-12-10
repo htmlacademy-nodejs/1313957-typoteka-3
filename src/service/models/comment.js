@@ -2,11 +2,11 @@
 
 const {DataTypes, Model} = require(`sequelize`);
 
-class Comment extends Model {
+class CommentModel extends Model {
 
 }
 
-const define = (sequelize) => Comment.init({
+const define = (sequelize) => CommentModel.init({
   text: {
     type: DataTypes.STRING,
     allowNull: false

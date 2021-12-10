@@ -61,7 +61,7 @@ const getRandomSubarray = (items) => {
 const generateArticles = (count, titles, publications, categories, comments) => (
   Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
-    announce: shuffle(publications).slice(1, 3).join(` `),
+    announce: shuffle(publications).slice(1, 2).join(` `),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
     fullText: shuffle(publications).slice(0, (getRandomInt(1, publications.length))).join(` `),
     categories: getRandomSubarray(categories),

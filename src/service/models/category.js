@@ -3,11 +3,11 @@
 const {DataTypes, Model} = require(`sequelize`);
 const Aliase = require(`./aliase`);
 
-class Category extends Model {
+class CategoryModel extends Model {
 
 }
 
-const define = (sequelize) => Category.init({
+const define = (sequelize) => CategoryModel.init({
   name: {
     type: DataTypes.STRING,
     allowNull: false

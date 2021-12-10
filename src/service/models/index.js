@@ -2,7 +2,7 @@
 
 const CategoryModel = require(`./category`);
 const ArticleModel = require(`./article`);
-const ArticleCategoryModel = require(`./comment`);
+const ArticleCategoryModel = require(`./article-category`);
 const CommentModel = require(`./comment`);
 
 const define = (sequelize) => {

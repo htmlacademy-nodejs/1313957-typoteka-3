@@ -2,12 +2,14 @@
 
 const {Model} = require(`sequelize`);
 
-class ArticleCategory extends Model {
+class ArticleCategoryModel extends Model {
 
 }
 
-const define = () => ArticleCategory.init({
-
+const define = (sequelize) => ArticleCategoryModel.init({}, {
+  sequelize,
+  modelName: `ArticleCategory`,
+  tableName: `articleCategory`
 });
 
-module.exports = define;
+module.exports = {define};

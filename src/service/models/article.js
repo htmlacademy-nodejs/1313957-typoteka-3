@@ -3,11 +3,11 @@
 const {DataTypes, Model} = require(`sequelize`);
 const Aliase = require(`./aliase`);
 
-class Article extends Model {
+class ArticleModel extends Model {
 
 }
 
-const define = (sequelize) => Article.init({
+const define = (sequelize) => ArticleModel.init({
   title: {
     // eslint-disable-next-line new-cap
     type: DataTypes.STRING(250),
