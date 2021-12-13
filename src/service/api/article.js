@@ -10,7 +10,7 @@ module.exports = (app, articleService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const articles = await articleService.findAll();
+    const articles = await articleService.findAll(true);
     res.status(HttpCode.OK).json(articles);
   });
 

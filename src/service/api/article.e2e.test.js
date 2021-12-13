@@ -160,7 +160,7 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
 
-  test(`First article's title  equals "Как достигнуть успеха не вставая с кресла"`, () => expect(response.body[0].title).toBe(`Как достигнуть успеха не вставая с кресла`));
+  test(`First article's title  equals "Что такое золотое сечение"`, () => expect(response.body[0].title).toBe(`Что такое золотое сечение`));
 
 });
 
@@ -275,7 +275,7 @@ test(`API returns a 404 status code when trying to change a non-existent article
   };
 
   return request(app)
-    .put(`/articles/20`)
+    .get(`/articles/20`)
     .send(validArticle)
     .expect(HttpCode.NOT_FOUND);
 

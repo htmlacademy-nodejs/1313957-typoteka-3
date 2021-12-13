@@ -28,13 +28,14 @@ class ArticleService {
       include.push(Aliase.COMMENTS);
     }
 
-    const article = await this._Article.findAll({
+    const articles = await this._Article.findAll({
       include,
       order: [
-        [`createdAt`, `DESC`]
+        [`createdAt`, `DESC`],
+        [`id`, `DESC`]
       ]
     });
-    return article.map((item) => item.get());
+    return articles.map((item) => item.get());
   }
 
   findOne(id, needComments) {

@@ -175,7 +175,7 @@ describe(`API creates a comment if data is valid`, () => {
   let app; let response;
 
   beforeAll(async () => {
-    app = createAPI();
+    app = await createAPI();
     response = await request(app)
       .post(`/articles/4/comments`)
       .send(newComment);
