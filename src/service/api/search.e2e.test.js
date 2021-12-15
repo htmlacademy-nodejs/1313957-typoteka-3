@@ -155,7 +155,7 @@ describe(`API returns article based on search qurey`, () => {
     response = await request(app)
       .get(`/search`)
       .query({
-        query: `Что такое золотое сечение`
+        query: `Как собрать`
       });
   });
 
@@ -163,7 +163,7 @@ describe(`API returns article based on search qurey`, () => {
 
   test(`1 article found`, () => expect(response.body.length).toBe(1));
 
-  test(`Article had correct title`, () => expect(response.body[0].id).toBe(`Как достигнуть успеха не вставая с кресла`));
+  test(`Article had correct title`, () => expect(response.body[0].title).toBe(`Как собрать камни бесконечности`));
 
 });
 

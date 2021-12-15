@@ -5,7 +5,7 @@ const Aliase = require(`../models/aliase`);
 
 class SearchService {
   constructor(sequelize) {
-    this._Article = sequelize.model.Article;
+    this._Article = sequelize.models.Article;
   }
 
   async findAll(searchText) {
