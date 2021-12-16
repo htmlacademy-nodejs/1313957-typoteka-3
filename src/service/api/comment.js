@@ -10,32 +10,31 @@ module.exports = (app, articleService, commentService) => {
 
   app.use(`/articles`, route);
 
-  route.get(`/:articleId/comments`, articleExist(articleService), (req, res) => {
-    const {article} = res.locals;
-    const comments = commentService.findAll(article);
+  route.get(`/:articleId/comments`, articleExist(articleService), async (req, res) => {
+    const {articleId} = req.params;
+    const comments = await commentService.findAll(articleId);
 
     res.status(HttpCode.OK)
       .json(comments);
 
   });
 
-  route.delete(`/:articleId/comments/:commentId`, articleExist(articleService), (req, res) => {
-    const {article} = res.locals;
+  route.delete(`/:articleId/comments/:commentId`, articleExist(articleService), async (req, res) => {
     const {commentId} = req.params;
-    const deletedComment = commentService.drop(article, commentId);
+    const deleted = await commentService.drop(commentId);
 
-    if (!deletedComment) {
+    if (!deleted) {
       return res.status(HttpCode.NOT_FOUND)
         .send(`Not found`);
     }
 
     return res.status(HttpCode.OK)
-      .json(deletedComment);
+      .json(deleted);
   });
 
   route.post(`/:articleId/comments`, [articleExist(articleService), commentValidator], (req, res) => {
-    const {article} = res.locals;
-    const comment = commentService.create(article, req.body);
+    const {articleId} = req.params;
+    const comment = commentService.create(articleId, req.body);
 
     return res.status(HttpCode.CREATED)
       .json(comment);
