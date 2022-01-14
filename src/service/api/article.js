@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const articleValidator = require(`../middlewares/article-validator`);
+const routeParamsValidator = require(`../middlewares/route-params-validator`);
 
 module.exports = (app, articleService) => {
   const route = new Router();
@@ -20,7 +21,7 @@ module.exports = (app, articleService) => {
     res.status(HttpCode.OK).json(result);
   });
 
-  route.get(`/:articleId`, async (req, res) => {
+  route.get(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {articleId} = req.params;
 
     const article = await articleService.findOne(articleId);
@@ -41,7 +42,7 @@ module.exports = (app, articleService) => {
       .json(article);
   });
 
-  route.put(`/:articleId`, articleValidator, async (req, res) => {
+  route.put(`/:articleId`, [routeParamsValidator, articleValidator], async (req, res) => {
     const {articleId} = req.params;
 
     const updateArticle = articleService.update(articleId, req.body);
@@ -55,7 +56,7 @@ module.exports = (app, articleService) => {
       .send(`Updated`);
   });
 
-  route.delete(`/:articleId`, async (req, res) => {
+  route.delete(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
 

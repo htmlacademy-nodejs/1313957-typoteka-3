@@ -1,17 +1,48 @@
 'use strict';
 
+const Joi = require(`joi`);
 const {HttpCode} = require(`../../constants`);
 
-const articleKeys = [`title`, `announce`, `fullText`, `categories`];
+const ErrorArticleMessage = {
+  TITLE_MIN: `Заголовок содержит менее 30 символов.`,
+  TITLE_MAX: `Заголовок не может содержать более 250 символов.`,
+  PICTURE: `Картинка должна быть строкой`,
+  DATE: `Дата должна быть заполнена.`,
+  CATEGORIES: `Не выбрана ни одна категория публикации.`,
+  ANNOUNCE_MIN: `Анонс публикации содержит меньше 30 символов.`,
+  ANNOUNCE_MAX: `Анонс публикации не может содержать более 250 символов.`,
+  FULL_TEXT: `Полный текст публикации не может быть более 1000 символов.`
+};
+
+const schema = Joi.object({
+  title: Joi.string().min(30).max(250).required().messages({
+    'string.min': ErrorArticleMessage.TITLE_MIN,
+    'string.max': ErrorArticleMessage.TITLE_MAX
+  }),
+  picture: Joi.string().allow(``).messages({
+    'picture.string': ErrorArticleMessage.PICTURE
+  }),
+  categories: Joi.array().items(
+      Joi.number().integer().positive().messages({
+        'number.base': ErrorArticleMessage.CATEGORIES
+      })
+  ).min(1).required(),
+  announce: Joi.string().min(30).max(250).required().messages({
+    'announce.min': ErrorArticleMessage.ANNOUNCE_MIN,
+    'announce.max': ErrorArticleMessage.ANNOUNCE_MAX
+  }),
+  fullText: Joi.string().max(1000).required().messages({
+    'fullText.max': ErrorArticleMessage.FULL_TEXT
+  })
+});
 
 module.exports = (req, res, next) => {
   const newArticle = req.body;
-  const keys = Object.keys(newArticle);
-  const keysExist = articleKeys.every((key) => keys.includes(key));
+  const {error} = schema.validate(newArticle, {abortEarly: false});
 
-  if (!keysExist) {
+  if (error) {
     return res.status(HttpCode.BAD_REQUEST)
-      .send(`Bad request`);
+      .send(error.details.map((err) => err.message).join(`\n`));
   }
 
   return next();

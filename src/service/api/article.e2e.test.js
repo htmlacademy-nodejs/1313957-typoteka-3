@@ -214,7 +214,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
     title: `Как достигнуть успеха не вставая с кресла`,
     announce: `Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
     fullText: `Простые ежедневные упражнения помогут достичь успеха. Первая большая ёлка была установлена только в 1938 году.`,
-    category: [`IT`, `Программирование`]
+    categories: [1, 2]
   };
 
   let app;
@@ -234,12 +234,40 @@ describe(`API refuses to create an article if data is invalid`, () => {
     }
   });
 
+  test(`When field type is wrong response code is 400`, async () => {
+    const badArticles = [
+      {...newArticle, title: true},
+      {...newArticle, picture: 12345},
+      {...newArticle, categories: `Болталка`}
+    ];
+    for (const badArticle of badArticles) {
+      await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
+  test(`When field value is wrong response code is 400`, async () => {
+    const badArticles = [
+      {...newArticle, title: `is short`},
+      {...newArticle, announce: `too short`},
+      {...newArticle, categories: []}
+    ];
+    for (const badArticle of badArticles) {
+      await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
 });
 
 describe(`API changed an existing article`, () => {
 
   const newArticle = {
-    title: `Рок — это протест`,
+    title: `Рок — это протест. Давайте продлим заголовок для валидатора.`,
     announce: `Простые ежедневные упражнения помогут достичь успеха. Золотое сечение — соотношение двух величин гармоническая пропорция.`,
     fullText: `Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете.`,
     categories: [2],
@@ -258,7 +286,7 @@ describe(`API changed an existing article`, () => {
 
   test(`Article is really changed`, () => request(app)
     .get(`/articles/2`)
-    .expect((res) => expect(res.body.title).toBe(`Рок — это протест`))
+    .expect((res) => expect(res.body.title).toBe(`Рок — это протест. Давайте продлим заголовок для валидатора.`))
   );
 
 });
