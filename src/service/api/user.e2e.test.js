@@ -4,11 +4,10 @@ const express = require(`express`);
 const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
 
-const comment = require(`./comment`);
-const DataService = require(`../data-service/article`);
-const CommentService = require(`../data-service/comment`);
 const initDB = require(`../lib/init-db`);
 const passwordUtils = require(`../lib/password`);
+const user = require(`./user`);
+const DataService = require(`../data-service/user`);
 
 const {HttpCode} = require(`../../constants`);
 
@@ -176,118 +175,97 @@ const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
   const app = express();
-
   app.use(express.json());
-  comment(app, new DataService(mockDB), new CommentService(mockDB));
+  user(app, new DataService(mockDB));
   return app;
 };
 
-describe(`API returns a list of comment to given article`, () => {
+describe(`API creates user if data is valid`, () => {
+  const validUserData = {
+    name: `Сидор`,
+    surname: `Сидоров`,
+    email: `sidorov@example.com`,
+    password: `sidorov`,
+    passwordRepeated: `sidorov`,
+    avatar: `sidorov.jpg`
+  };
 
   let response;
 
   beforeAll(async () => {
-    const app = await createAPI();
+    let app = await createAPI();
     response = await request(app)
-      .get(`/articles/1/comments`);
-  });
-
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Return list of 3 comments`, () => expect(response.body.length).toBe(3));
-
-  test(`First comment's text is "Мне кажется или я уже читал это где-то?"`, () => expect(response.body[0].text).toBe(`Мне кажется или я уже читал это где-то?`));
-
-});
-
-describe(`API creates a comment if data is valid`, () => {
-
-  const newComment = {
-    text: `Валидному комментарию достаточно этого поля`,
-    userId: 1
-  };
-
-  let app; let response;
-
-  beforeAll(async () => {
-    app = await createAPI();
-    response = await request(app)
-      .post(`/articles/4/comments`)
-      .send(newComment);
+      .post(`/user`)
+      .send(validUserData);
   });
 
   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
-
-  test(`Comment count is changed`, () => request(app)
-    .get(`/articles/4/comments`)
-    .expect((res) => expect(res.body.length).toBe(4))
-  );
-
 });
 
-test(`API refuses to create a comment to non-existent article and returns status code 404`, async () => {
-
-  const app = await createAPI();
-
-  return request(app)
-    .post(`/articles/20/comments`)
-    .send({
-      text: `Неважно`
-    })
-    .expect(HttpCode.NOT_FOUND);
-
-});
-
-test(`API refuses to create a comment when data is invalid, and return status code 400`, async () => {
-
-  const invalidComment = {
-    text: `Не указан userId`
+describe(`API refuses to create user if data is invalid`, () => {
+  const validUserData = {
+    name: `Сидор`,
+    email: `sidorov@example.com`,
+    password: `sidorov`,
+    passwordRepeated: `sidorov`
   };
 
-  const app = await createAPI();
-
-  return request(app)
-    .post(`/articles/2/comments`)
-    .send({invalidComment})
-    .expect(HttpCode.BAD_REQUEST);
-
-});
-
-describe(`API correctly deletes a comment`, () => {
-
-  let app; let response;
+  let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app)
-      .delete(`/articles/1/comments/1`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`Without any required property response code is 400`, async () => {
+    for (const key of Object.keys(validUserData)) {
+      const badUserData = {...validUserData};
+      delete badUserData[key];
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
 
-  test(`Comments count is 2 now`, () => request(app)
-    .get(`/articles/1/comments`)
-    .expect((res) => expect(res.body.length).toBe(2))
-  );
+  test(`When field type is wrong response code is 400`, async () => {
+    const badUsers = [
+      {...validUserData, firstName: true},
+      {...validUserData, email: 1}
+    ];
+    for (const badUserData of badUsers) {
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
 
-});
+  test(`When field value is wrong response code is 400`, async () => {
+    const badUsers = [
+      {...validUserData, password: `short`, passwordRepeated: `short`},
+      {...validUserData, email: `invalid`}
+    ];
+    for (const badUserData of badUsers) {
+      await request(app)
+        .post(`/user`)
+        .send(badUserData)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
 
-test(`API refuses to delete non-existent comment`, async () => {
+  test(`When password and passwordRepeated are not equal, code is 400`, async () => {
+    const badUserData = {...validUserData, passwordRepeated: `not sidorov`};
+    await request(app)
+      .post(`/user`)
+      .send(badUserData)
+      .expect(HttpCode.BAD_REQUEST);
+  });
 
-  const app = await createAPI();
-
-  return request(app)
-    .delete(`/articles/2/comments/100`)
-    .expect(HttpCode.NOT_FOUND);
-
-});
-
-test(`API refuses to delete a comment to non-existent article`, async () =>{
-
-  const app = await createAPI();
-
-  return request(app)
-    .delete(`/articles/200/comments/1`)
-    .expect(HttpCode.NOT_FOUND);
-
+  test(`When email is already in use status code is 400`, async () => {
+    const badUserData = {...validUserData, email: `ivanov@example.com`};
+    await request(app)
+      .post(`/user`)
+      .send(badUserData)
+      .expect(HttpCode.BAD_REQUEST);
+  });
 });

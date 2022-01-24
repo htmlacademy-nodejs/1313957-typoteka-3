@@ -2,11 +2,11 @@
 
 const {DataTypes, Model} = require(`sequelize`);
 
-class CommentModel extends Model {
+class Comment extends Model {
 
 }
 
-const define = (sequelize) => CommentModel.init({
+const define = (sequelize) => Comment.init({
   text: {
     type: DataTypes.STRING,
     allowNull: false
@@ -17,8 +17,4 @@ const define = (sequelize) => CommentModel.init({
   tableName: `comments`
 });
 
-const defineRelations = ({Article, Comment}) => {
-  Comment.belongsTo(Article, {foreignKey: `articleId`});
-};
-
-module.exports = {define, defineRelations};
+module.exports = define;

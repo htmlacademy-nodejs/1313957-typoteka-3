@@ -5,6 +5,7 @@ const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
 
 const initDB = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 const article = require(`./article`);
 const DataService = require(`../data-service/article`);
 
@@ -22,6 +23,25 @@ const mockCategories = [
   `Железо`
 ];
 
+const mockUsers = [
+  {
+    name: `Иван`,
+    surname: `Иванов`,
+    email: `ivanov@example.com`,
+    passwordHash: passwordUtils.hashSync(`ivanov`),
+    avatar: `avatar01.jpg`,
+    role: `administrator`
+  },
+  {
+    name: `Пётр`,
+    surname: `Петров`,
+    email: `petrov@example.com`,
+    passwordHash: passwordUtils.hashSync(`petrov`),
+    avatar: `avatar02.jpg`,
+    role: `reader`
+  }
+];
+
 const mockArticles = [
   {
     "title": `Как достигнуть успеха не вставая с кресла`,
@@ -34,12 +54,15 @@ const mockArticles = [
     ],
     "comments": [
       {
+        "user": `petrov@example.com`,
         "text": `Мне кажется или я уже читал это где-то? Планируете записать видосик на эту тему?`
       },
       {
+        "user": `ivanov@example.com`,
         "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Согласен с автором! Планируете записать видосик на эту тему?`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Планируете записать видосик на эту тему? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Совсем немного...`
       }
     ]
@@ -62,9 +85,11 @@ const mockArticles = [
     ],
     "comments": [
       {
+        "user": `ivanov@example.com`,
         "text": `Согласен с автором! Планируете записать видосик на эту тему? Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Хочу такую же футболку :-) Согласен с автором! Плюсую, но слишком много буквы!`
       }
     ]
@@ -85,9 +110,11 @@ const mockArticles = [
     ],
     "comments": [
       {
+        "user": `ivanov@example.com`,
         "text": `Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы! Это где ж такие красоты?`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Согласен с автором! Совсем немного... Хочу такую же футболку :-)`
       }
     ]
@@ -102,12 +129,15 @@ const mockArticles = [
     ],
     "comments": [
       {
+        "user": `ivanov@example.com`,
         "text": `Хочу такую же футболку :-) Плюсую, но слишком много буквы! Это где ж такие красоты?`
       },
       {
+        "user": `ivanov@example.com`,
         "text": `Мне кажется или я уже читал это где-то? Совсем немного...`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Согласен с автором!`
       }
     ]
@@ -122,15 +152,19 @@ const mockArticles = [
     ],
     "comments": [
       {
+        "user": `petrov@example.com`,
         "text": `Плюсую, но слишком много буквы! Согласен с автором!`
       },
       {
+        "user": `ivanov@example.com`,
         "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Хочу такую же футболку :-) Согласен с автором!`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Это где ж такие красоты? Мне кажется или я уже читал это где-то?`
       },
       {
+        "user": `petrov@example.com`,
         "text": `Плюсую, но слишком много буквы! Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`
       }
     ]
@@ -139,7 +173,7 @@ const mockArticles = [
 
 const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
   const app = express();
   app.use(express.json());
   article(app, new DataService(mockDB));

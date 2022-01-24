@@ -1,13 +1,12 @@
 'use strict';
 
 const {DataTypes, Model} = require(`sequelize`);
-const Aliase = require(`./aliase`);
 
-class ArticleModel extends Model {
+class Article extends Model {
 
 }
 
-const define = (sequelize) => ArticleModel.init({
+const define = (sequelize) => Article.init({
   title: {
     // eslint-disable-next-line new-cap
     type: DataTypes.STRING(250),
@@ -31,9 +30,5 @@ const define = (sequelize) => ArticleModel.init({
   tableName: `articles`
 });
 
-const defineRelations = ({Article, Category, Comment, ArticleCategory}) => {
-  Article.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `articleId`, onDelete: `cascade`});
-  Article.belongsToMany(Category, {through: ArticleCategory, as: Aliase.CATEGORIES});
-};
 
-module.exports = {define, defineRelations};
+module.exports = define;

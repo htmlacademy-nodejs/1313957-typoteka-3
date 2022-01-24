@@ -8,6 +8,7 @@ const {
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
 const initDatabase = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_PUBLICATIONS_PATH = `./data/publications.txt`;
@@ -34,11 +35,12 @@ const readContent = async (filePath) => {
   }
 };
 
-const generateComments = (count, comments) => (
+const generateComments = (count, comments, users) => (
   Array(count).fill({}).map(() => ({
+    user: users[getRandomInt(0, users.length - 1)].email,
     text: shuffle(comments)
       .slice(0, getRandomInt(1, 3))
-      .join(` `),
+      .join(` `)
   }))
 );
 
@@ -58,14 +60,14 @@ const getRandomSubarray = (items) => {
   return result;
 };
 
-const generateArticles = (count, titles, publications, categories, comments) => (
+const generateArticles = (count, titles, publications, categories, comments, users) => (
   Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
     announce: shuffle(publications).slice(1, 2).join(` `),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
     fullText: shuffle(publications).slice(0, (getRandomInt(1, publications.length))).join(` `),
     categories: getRandomSubarray(categories),
-    comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
+    comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
   }))
 );
 
@@ -85,14 +87,28 @@ module.exports = {
     const publications = await readContent(FILE_PUBLICATIONS_PATH);
     const categories = await readContent(FILE_CATEGORIES_PATH);
     const comments = await readContent(FILE_COMMENTS_PATH);
+    const users = [
+      {
+        name: `Иван`,
+        surname: `Иванов`,
+        email: `ivanov@example.com`,
+        passwordHash: passwordUtils.hashSync(`ivanov`),
+        avatar: `avatar01.jpg`,
+        role: `administrator`
+      },
+      {
+        name: `Пётр`,
+        surname: `Петров`,
+        email: `petrov@example.com`,
+        passwordHash: passwordUtils.hashSync(`petrov`),
+        avatar: `avatar02.jpg`,
+        role: `reader`
+      }
+    ];
 
     const [count] = args;
     const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const articles = generateArticles(countArticle, titles, publications, categories, comments);
-    try {
-      return initDatabase(sequelize, {articles, categories});
-    } catch (err) {
-      return logger.error(`An error occurred when filling in the database: ${err.message}`);
-    }
+    const articles = generateArticles(countArticle, titles, publications, categories, comments, users);
+    return initDatabase(sequelize, {articles, categories, users});
   }
 };

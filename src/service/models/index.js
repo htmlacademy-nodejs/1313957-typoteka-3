@@ -1,25 +1,35 @@
 'use strict';
 
-const CategoryModel = require(`./category`);
-const ArticleModel = require(`./article`);
-const ArticleCategoryModel = require(`./article-category`);
-const CommentModel = require(`./comment`);
+const {Model} = require(`sequelize`);
+const defineCategory = require(`./category`);
+const defineArticle = require(`./article`);
+const defineComment = require(`./comment`);
+const defineUser = require(`./user`);
+const Aliase = require(`./aliase`);
+
+class ArticleCategory extends Model {
+
+}
 
 const define = (sequelize) => {
-  const Category = CategoryModel.define(sequelize);
-  const Article = ArticleModel.define(sequelize);
-  const ArticleCategory = ArticleCategoryModel.define(sequelize);
-  const Comment = CommentModel.define(sequelize);
+  const Category = defineCategory(sequelize);
+  const Article = defineArticle(sequelize);
+  const Comment = defineComment(sequelize);
+  const User = defineUser(sequelize);
 
-  [ArticleModel, CategoryModel, CommentModel].forEach((model) => model.defineRelations({
-    Article,
-    Category,
-    Comment,
-    ArticleCategory
-  }));
+  Article.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `articleId`, onDelete: `cascade`});
+  Comment.belongsTo(Article, {foreignKey: `articleId`});
 
+  ArticleCategory.init({}, {sequelize, modelName: `ArticleCategory`, tableName: `articleCategory`});
 
-  return {Category, Comment, Article, ArticleCategory};
+  Article.belongsToMany(Category, {through: ArticleCategory, as: Aliase.CATEGORIES});
+  Category.belongsToMany(Article, {through: ArticleCategory, as: Aliase.ARTICLES});
+  Category.hasMany(ArticleCategory, {as: Aliase.ARTICLE_CATEGORIES});
+
+  User.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `userId`});
+  Comment.belongsTo(User, {as: Aliase.USERS, foreignKey: `userId`});
+
+  return {Category, Comment, Article, ArticleCategory, User};
 };
 
 module.exports = define;
