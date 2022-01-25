@@ -83,16 +83,7 @@ class ArticleService {
     const {count, rows} = await this._Article.findAndCountAll({
       limit,
       offset,
-      include: [
-        Aliase.CATEGORIES,
-        {
-          model: this._User,
-          as: Aliase.USERS,
-          attributes: {
-            exclude: [`passwordHash`]
-          }
-        }
-      ],
+      include: [Aliase.CATEGORIES],
       order: [
         [`createdAt`, `DESC`]
       ],
