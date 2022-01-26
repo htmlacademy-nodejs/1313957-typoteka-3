@@ -29,7 +29,9 @@ mainRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles, categories, page, totalPages});
 });
 
-mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
+mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+
+mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
   const {body, file} = req;
   const userData = {
     avatar: file ? file.filename : ``,
@@ -45,8 +47,7 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     res.redirect(`/login`);
   } catch (errors) {
     const validationMessages = prepareErrors(errors);
-    const {user} = req.session;
-    res.render(`sign-up`, {validationMessages, user});
+    res.render(`sign-up`, {validationMessages});
   }
 });
 
@@ -62,8 +63,6 @@ mainRouter.get(`/search`, async (req, res) => {
     res.render(`search-empty`, {query});
   }
 });
-
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
 
 mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
 

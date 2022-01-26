@@ -187,7 +187,8 @@ describe(`API creates user if data is valid`, () => {
     email: `sidorov@example.com`,
     password: `sidorov`,
     passwordRepeated: `sidorov`,
-    avatar: `sidorov.jpg`
+    avatar: `sidorov.jpg`,
+    role: `reader`
   };
 
   let response;

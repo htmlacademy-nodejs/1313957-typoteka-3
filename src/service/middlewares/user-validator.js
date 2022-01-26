@@ -10,14 +10,15 @@ const ErrorRegisterMessage = {
   EMAIL_EXIST: `Электронный адрес уже используется`,
   PASSWORD: `Пароль содержит меньше 6-ти символов`,
   PASSWORD_REPEATED: `Пароли не совпадают`,
-  AVATAR: `Тип изображения не поддерживается`
+  AVATAR: `Тип изображения не поддерживается`,
+  ROLE: `Не указана роль пользователя`
 };
 
 const schema = Joi.object({
   name: Joi.string().pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/).required().messages({
     'string.pattern.base': ErrorRegisterMessage.NAME
   }),
-  surname: Joi.string().pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/).messages({
+  surname: Joi.string().allow(``).pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/).messages({
     'string.pattern.base': ErrorRegisterMessage.SURNAME
   }),
   email: Joi.string().email().required().messages({
@@ -30,7 +31,10 @@ const schema = Joi.object({
     'any.only': ErrorRegisterMessage.PASSWORD_REPEATED
   }),
   avatar: Joi.string().allow(``).messages({
-    'avatar.string': ErrorRegisterMessage.AVATAR
+    'any.only': ErrorRegisterMessage.AVATAR
+  }),
+  role: Joi.string().required().messages({
+    'any.required': ErrorRegisterMessage.ROLE
   })
 });
 

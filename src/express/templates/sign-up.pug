@@ -8,7 +8,7 @@ block content
         a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
         h2.popup__title Регистрация
         .popup__form.popup__form--active.form.form--register
-          form(action='#' method='get')
+          form(action="#" method="post" enctype="multipart/form-data" autocomplete="off")
             .form__field
               label
                 input(type='email' name='email' placeholder='Электронная почта' required)
@@ -24,8 +24,7 @@ block content
             .form__field
               label
                 input(type='password' name='repeat-password' placeholder='Повтор пароля' required)
-            .form__validation-error
-              +insertErrorMessages(validationMessages)
+            +insertErrorMessages(validationMessages)
             .form__image-loader
               a.form__avatar.avatar
                 img(src='/img/icons/smile.svg' alt='аватар пользователя')
