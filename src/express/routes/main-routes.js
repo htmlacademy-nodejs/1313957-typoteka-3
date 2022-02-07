@@ -10,6 +10,9 @@ const ARTICLES_PER_PAGE = 8;
 const mainRouter = new Router();
 
 mainRouter.get(`/`, async (req, res) => {
+
+  const {user} = req.session;
+
   let {page = 1} = req.query;
   page = +page;
 
@@ -26,10 +29,13 @@ mainRouter.get(`/`, async (req, res) => {
 
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
-  res.render(`main`, {articles, categories, page, totalPages});
+  res.render(`main`, {articles, categories, page, totalPages, user});
 });
 
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+mainRouter.get(`/register`, (req, res) => {
+  const {user} = req.session;
+  res.render(`sign-up`, {user});
+});
 
 mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
   const {body, file} = req;
@@ -46,24 +52,45 @@ mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
     await api.createUser(userData);
     res.redirect(`/login`);
   } catch (errors) {
+    const {user} = req.session;
     const validationMessages = prepareErrors(errors);
-    res.render(`sign-up`, {validationMessages});
+    res.render(`sign-up`, {user, validationMessages});
   }
 });
 
-mainRouter.get(`/login`, (req, res) => res.render(`login`));
+mainRouter.get(`/login`, (req, res) => {
+  const {user} = req.session;
+  res.render(`login`, {user});
+});
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(req.body[`email`], req.body[`password`]);
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    const {user} = req.session;
+    res.render(`login`, {user, validationMessages});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/`);
+});
 
 mainRouter.get(`/search`, async (req, res) => {
+  const {user} = req.session;
   const {query} = req.query;
   try {
     const results = await api.search(query);
-
-    res.render(`search-result`, {results, query});
+    res.render(`search-result`, {user, results});
   } catch (error) {
-    res.render(`search-empty`, {query});
+    res.render(`search-empty`, {user, results: []});
   }
 });
-
-mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
 
 module.exports = mainRouter;

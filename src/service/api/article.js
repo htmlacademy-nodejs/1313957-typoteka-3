@@ -23,8 +23,9 @@ module.exports = (app, articleService) => {
 
   route.get(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {articleId} = req.params;
+    const {comments} = req.query;
 
-    const article = await articleService.findOne(articleId);
+    const article = await articleService.findOne(articleId, comments);
 
     if (!article) {
       return res.status(HttpCode.NOT_FOUND)

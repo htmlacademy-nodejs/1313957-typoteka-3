@@ -24,11 +24,11 @@ block content
             .form__field
               label
                 input(type='password' name='repeat-password' placeholder='Повтор пароля' required)
-            +insertErrorMessages(validationMessages)
             .form__image-loader
               a.form__avatar.avatar
                 img(src='/img/icons/smile.svg' alt='аватар пользователя')
               label
                 input.visually-hidden(type='file' name='upload')
                 | Загрузить фото профиля
+            +insertErrorMessages(validationMessages)
             button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться

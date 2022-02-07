@@ -19,7 +19,8 @@ module.exports = new Sequelize(
         min: 0,
         acquire: 10000,
         idle: 10000
-      }
+      },
+      logging: false
     }
 );
 

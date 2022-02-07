@@ -93,7 +93,7 @@ module.exports = {
         surname: `Иванов`,
         email: `ivanov@example.com`,
         passwordHash: passwordUtils.hashSync(`ivanov`),
-        avatar: `avatar01.jpg`,
+        avatar: `avatar-1.png`,
         role: `administrator`
       },
       {
@@ -101,7 +101,7 @@ module.exports = {
         surname: `Петров`,
         email: `petrov@example.com`,
         passwordHash: passwordUtils.hashSync(`petrov`),
-        avatar: `avatar02.jpg`,
+        avatar: `avatar-2.png`,
         role: `reader`
       }
     ];
