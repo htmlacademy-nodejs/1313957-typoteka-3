@@ -20,9 +20,9 @@ mainRouter.get(`/`, async (req, res) => {
 
   const offset = (page - 1) * ARTICLES_PER_PAGE;
   const [
-    {count, articles},
-    categories
-  ] = await Promise.all([
+          {count, articles},
+          categories
+        ] = await Promise.all([
     api.getArticles({limit, offset}),
     api.getCategories(true) // опциональный аргумент
   ]);
@@ -79,8 +79,7 @@ mainRouter.post(`/login`, async (req, res) => {
 });
 
 mainRouter.get(`/logout`, (req, res) => {
-  delete req.session.user;
-  res.redirect(`/`);
+  req.session.destroy(() => res.redirect(`/`));
 });
 
 mainRouter.get(`/search`, async (req, res) => {
