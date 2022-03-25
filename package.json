@@ -38,6 +38,7 @@
     "axios": "0.22.0",
     "bcrypt": "5.0.1",
     "chalk": "3.0.0",
+    "concurrently": "7.0.0",
     "connect-session-sequelize": "7.1.2",
     "cross-env": "7.0.3",
     "csurf": "1.11.0",
