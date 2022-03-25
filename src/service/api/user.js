@@ -30,7 +30,7 @@ module.exports = (app, service) => {
       .json(result);
   });
 
-  route.post(`/auth`, asyncHandler(async (req, res, next) => {
+  route.post(`/auth`, asyncHandler(async (req, res) => {
     const {email, password} = req.body;
     const user = await service.findByEmail(email);
 
