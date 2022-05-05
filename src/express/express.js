@@ -21,6 +21,7 @@ if (!SESSION_SECRET) {
 }
 
 const app = express();
+app.locals.moment = require(`moment`);
 
 const mySessionStore = new SequelizeStore({
   db: sequelize,

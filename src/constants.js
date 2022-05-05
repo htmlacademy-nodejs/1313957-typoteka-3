@@ -35,6 +35,12 @@ const HttpMethod = {
   DELETE: `DELETE`
 };
 
+const DISPLAY_SETTINGS = {
+  limitArticles: 8,
+  limitAnnounce: 4,
+  limitComment: 4,
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
@@ -43,5 +49,6 @@ module.exports = {
   API_PREFIX,
   HttpCode,
   Env,
-  HttpMethod
+  HttpMethod,
+  DISPLAY_SETTINGS,
 };

@@ -1,13 +1,14 @@
 'use strict';
 
-const Aliase = require(`../models/aliase`);
+const Alias = require(`../models/alias`);
+const {Sequelize} = require(`sequelize`);
 
 class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
-    this._Category = sequelize.models.Category;
     this._User = sequelize.models.User;
+    this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
   async create(articleData) {
@@ -16,23 +17,36 @@ class ArticleService {
     return article.get();
   }
 
-  async drop(id) {
-    const deletedRows = await this._Article.destroy({
-      where: {id}
+  async findOne(id) {
+    const include = [Alias.CATEGORIES];
+    include.push({
+      model: this._Comment,
+      as: Alias.COMMENTS,
+      include: [
+        {
+          model: this._User,
+          as: Alias.USERS,
+          attributes: {
+            exclude: [`passwordHash`]
+          },
+        }
+      ],
+      order: [[`createdAt`, `DESC`]],
     });
-    return !!deletedRows;
+
+    return this._Article.findByPk(id, {include});
   }
 
   async findAll(needComments) {
-    const include = [Aliase.CATEGORIES];
+    const include = [Alias.CATEGORIES];
     if (needComments) {
       include.push({
         model: this._Comment,
-        as: Aliase.COMMENTS,
+        as: Alias.COMMENTS,
         include: [
           {
             model: this._User,
-            as: Aliase.USERS,
+            as: Alias.USERS,
             attributes: {
               exclude: [`passwordHash`]
             }
@@ -51,24 +65,60 @@ class ArticleService {
     return articles.map((item) => item.get());
   }
 
-  findOne(id, needComments) {
-    const include = [Aliase.CATEGORIES];
-    if (needComments) {
+  async findPage({limit, offset, categoryId}) {
+    const include = [Alias.CATEGORIES, Alias.COMMENTS];
+    if (categoryId) {
       include.push({
-        model: this._Comment,
-        as: Aliase.COMMENTS,
-        include: [
-          {
-            model: this._User,
-            as: Aliase.USERS,
-            attributes: {
-              exclude: [`passwordHash`]
-            }
-          }
-        ]
+        model: this._ArticleCategory,
+        as: Alias.ARTICLE_CATEGORIES,
+        attributes: [],
+        require: true,
+        where: {
+          categoryId,
+        },
       });
     }
-    return this._Article.findByPk(id, {include});
+
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include,
+      order: [
+        [`createdAt`, `DESC`],
+        [`id`, `DESC`]
+      ],
+      distinct: true
+    });
+    return {count, articles: rows};
+  }
+
+  async findHotArticles(limit) {
+    const articles = await this._Article.findAll({
+      attributes: [
+        `id`,
+        `announce`,
+        [Sequelize.fn(`COUNT`, Sequelize.col(`comments.id`)), `commentsCount`],
+      ],
+      include: [
+        {
+          model: this._Comment,
+          as: Alias.COMMENTS,
+          attributes: [],
+        },
+      ],
+      group: [Sequelize.col(`Article.id`)],
+      order: [[Sequelize.col(`commentsCount`), `DESC`]],
+      having: Sequelize.where(
+          Sequelize.fn(`COUNT`, Sequelize.col(`comments.id`)),
+          {
+            [Sequelize.Op.gt]: 0,
+          },
+      ),
+      limit,
+      subQuery: false,
+    });
+
+    return articles.map((article) => article.get());
   }
 
   async update(id, offer) {
@@ -79,22 +129,12 @@ class ArticleService {
     return !!affectedRows;
   }
 
-  async findPage({limit, offset}) {
-    const {count, rows} = await this._Article.findAndCountAll({
-      limit,
-      offset,
-      include: [
-        Aliase.CATEGORIES,
-        Aliase.COMMENTS
-      ],
-      order: [
-        [`createdAt`, `DESC`]
-      ],
-      distinct: true
+  async drop(id) {
+    const deletedRows = await this._Article.destroy({
+      where: {id}
     });
-    return {count, articles: rows};
+    return !!deletedRows;
   }
-
 }
 
 module.exports = ArticleService;

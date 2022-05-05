@@ -10,7 +10,7 @@ block content
             label
               input(type='text' name='query' value=query placeholder='Что ищем?')
             button.search__button.button.button--transparent(type='submit') Найти
-          each result in results
-            +insertSearchResult(result)
+          each article in results
+            +insertSearchResult(article)
 
 

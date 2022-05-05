@@ -20,20 +20,17 @@ class API {
     return response.data;
   }
 
-  getArticles({offset, limit, comments} = {}) {
-    return this._load(`/articles`, {params: {offset, limit, comments}});
+  // Публикации
+  getArticle(id) {
+    return this._load(`/articles/${id}`);
   }
 
-  getArticle(id, comments) {
-    return this._load(`/articles/${id}`, {params: {comments}});
+  getArticles({offset, limit, comments, categoryId} = {}) {
+    return this._load(`/articles`, {params: {offset, limit, comments, categoryId}});
   }
 
-  search(query) {
-    return this._load(`/search`, {params: {query}});
-  }
-
-  getCategories(count) {
-    return this._load(`/category`, {params: {count}});
+  getHotArticles({limit} = {}) {
+    return this._load(`/articles/hot_articles`, {params: {limit}});
   }
 
   createArticle(data) {
@@ -44,19 +41,67 @@ class API {
   }
 
   editArticle(id, data) {
-    return this._load(`/offers/${id}`, {
+    return this._load(`/articles/${id}`, {
       method: HttpMethod.PUT,
       data
     });
   }
 
+  deleteArticle(id) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  // Комментарии
+  getLastComments({limit} = {}) {
+    return this._load(`/articles/last_comments`, {params: {limit}});
+  }
+
+  // Категории
+  getCategory({id}) {
+    return this._load(`/categories/${id}`);
+  }
+
+  getCategories({count} = {}) {
+    return this._load(`/categories`, {params: {count}});
+  }
+
+  createCategory(name) {
+    return this._load(`/categories/add`, {
+      method: HttpMethod.POST,
+      data: {name},
+    });
+  }
+
+  updateCategory(id, name) {
+    return this._load(`/categories/${id}`, {
+      method: HttpMethod.PUT,
+      data: {name},
+    });
+  }
+
+  deleteCategory(id) {
+    return this._load(`/categories/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  // Комментарии
   createComment(id, data) {
-    return this._load(`/offers/${id}/comments`, {
+    return this._load(`/articles/${id}/comments`, {
       method: HttpMethod.POST,
       data
     });
   }
 
+  deleteComment({articleId, commentId}) {
+    return this._load(`/articles/${articleId}/comments/${commentId}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  // Пользователь и авторизация
   createUser(data) {
     return this._load(`/user`, {
       method: HttpMethod.POST,
@@ -69,6 +114,11 @@ class API {
       method: HttpMethod.POST,
       data: {email, password}
     });
+  }
+
+  // Поиск
+  search(query) {
+    return this._load(`/search`, {params: {query}});
   }
 }
 

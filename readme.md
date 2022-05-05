@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгений Потапов](https://up.htmlacademy.ru/nodejs/3/user/1313957).
-* Наставник: [Алексей Пушников](https://htmlacademy.ru/profile/id476723).
+* Наставник: [Сергей Вохмянин](https://htmlacademy.ru/profile/id530823).
 
 ---
 

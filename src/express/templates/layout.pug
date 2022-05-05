@@ -21,20 +21,25 @@ head
       padding: 10px;
     }
 body.wrapper
+  -
+    const truncateText = (text, maxLength) => text.length > maxLength ? text.slice(0, maxLength).concat('...') : text;
+
+    const getArticleTitle = (articles, id) => articles.filter(article => article.id === id)[0].title;
+
+    const isChecked = (article, {id}) => article.categories && article.categories.some(item => item === id || item.id === id);
 
   mixin insertArticleImage(article)
-    img(src=`/img/${article.picture ? article.picture : 'blank.png'}` alt=article.title)
+    img.preview__background-image(src=`/img/${article.picture ? article.picture : 'blank.png'}` width="460" height="240" alt=article.title)
 
-  mixin insertSearchResult(result)
+  mixin insertSearchResult(article)
     .search__result
-      time.search__date(datetime=`${result.createdDate}`) #{result.createdDate}
-      a.search__link
-        | #{result.title}
+      time.search__date(datetime=article.createdAt) #{moment(article.createdAt).format('DD.MM.YYYY')}
+      a.search__link(href=`/articles/${article.id}`) #{article.title}
 
   mixin insertCategory(category)
     .new-publication__checkbox(class=`new-publication__checkbox--${category}`)
-      input(id=`checkbox-${category}`, type='checkbox', name='category', value=category)
-      label(for=`checkbox-${category}`) #{category}
+      input(class=`checkbox-${category.id}` type='checkbox' name=`category-${category.id}` checked=article ? isChecked(article, category): false id = category.id)
+      label(for=category.id) #{category.name}
 
   mixin pagination(page, totalPages, width, prefix)
     -

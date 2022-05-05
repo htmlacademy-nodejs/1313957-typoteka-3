@@ -1,7 +1,7 @@
 'use strict';
 
 const {Op} = require(`sequelize`);
-const Aliase = require(`../models/aliase`);
+const Alias = require(`../models/alias`);
 
 class SearchService {
   constructor(sequelize) {
@@ -15,14 +15,13 @@ class SearchService {
           [Op.substring]: searchText
         }
       },
-      include: [Aliase.CATEGORIES],
+      include: [Alias.CATEGORIES],
       order: [
         [`createdAt`, `DESC`]
       ]
     });
     return articles.map((article) => article.get());
   }
-
 }
 
 module.exports = SearchService;

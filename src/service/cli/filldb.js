@@ -68,6 +68,7 @@ const generateArticles = (count, titles, publications, categories, comments, use
     fullText: shuffle(publications).slice(0, (getRandomInt(1, publications.length))).join(` `),
     categories: getRandomSubarray(categories),
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
+    userId: 1,
   }))
 );
 

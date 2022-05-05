@@ -1,17 +1,20 @@
 'use strict';
 
 const Sequelize = require(`sequelize`);
-const Aliase = require(`../models/aliase`);
+const Alias = require(`../models/alias`);
 
 class CategoryService {
   constructor(sequelize) {
-    this._Article = sequelize.models.Article;
     this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
-  async findAll(needCount) {
-    if (needCount) {
+  async create(name) {
+    return await this._Category.create({name});
+  }
+
+  async findAll(isCountNeeded) {
+    if (isCountNeeded) {
       const result = await this._Category.findAll({
         attributes: [
           `id`,
@@ -19,22 +22,65 @@ class CategoryService {
           [
             Sequelize.fn(
                 `COUNT`,
-                `*`
+                Sequelize.col(`articleCategories.categoryId`),
             ),
-            `count`
-          ]
+            `count`,
+          ],
         ],
+        include: [
+          {
+            model: this._ArticleCategory,
+            as: Alias.ARTICLE_CATEGORIES,
+            attributes: [],
+          },
+        ],
+        having: Sequelize.where(
+            Sequelize.fn(`COUNT`, Sequelize.col(`articleCategories.categoryId`)),
+            {
+              [Sequelize.Op.gt]: 0,
+            },
+        ),
         group: [Sequelize.col(`Category.id`)],
-        include: [{
-          model: this._ArticleCategory,
-          as: Aliase.ARTICLE_CATEGORIES,
-          attributes: []
-        }]
+        order: [[`name`, `ASC`]],
       });
-      return result.map((it) => it.get());
-    } else {
-      return await this._Category.findAll({raw: true});
+
+      return result.map((item) => item.get());
     }
+
+    return await this._Category.findAll({
+      raw: true,
+      order: [[`name`, `ASC`]],
+    });
+  }
+
+  async findByName(name) {
+    const category = await this._Category.findOne({where: {name}});
+    return category && category.get();
+  }
+
+  async findOne(id) {
+    return await this._Category.findOne({
+      attributes: [`id`, `name`],
+      where: {id},
+      raw: true,
+    });
+  }
+
+  async getArticlesByCategory(categoryId) {
+    return await this._ArticleCategory.findAll({
+      raw: true,
+      where: {categoryId},
+    });
+  }
+
+  async update(id, name) {
+    const updatedRows = await this._Category.update({name}, {where: {id}});
+    return !!updatedRows;
+  }
+
+  async drop(id) {
+    const deletedRows = await this._Category.destroy({where: {id}});
+    return !!deletedRows;
   }
 }
 

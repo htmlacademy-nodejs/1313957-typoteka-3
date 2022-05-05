@@ -1,7 +1,7 @@
 'use strict';
 
 const defineModels = require(`../models`);
-const Aliase = require(`../models/aliase`);
+const Alias = require(`../models/alias`);
 
 module.exports = async (sequelize, {categories, articles, users}) => {
   const {Category, Article, User} = defineModels(sequelize);
@@ -16,7 +16,7 @@ module.exports = async (sequelize, {categories, articles, users}) => {
     ...acc
   }), {});
 
-  const userModels = await User.bulkCreate(users, {include: [Aliase.COMMENTS]});
+  const userModels = await User.bulkCreate(users, {include: [Alias.COMMENTS]});
 
   const userIdByEmail = userModels.reduce((acc, next) => ({
     [next.email]: next.id,
@@ -30,7 +30,7 @@ module.exports = async (sequelize, {categories, articles, users}) => {
   });
 
   const articlePromises = articles.map(async (article) => {
-    const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
+    const articleModel = await Article.create(article, {include: [Alias.COMMENTS]});
     await articleModel.addCategories(
         article.categories.map(
             (name) => categoryIdByName[name]

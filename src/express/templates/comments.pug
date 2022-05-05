@@ -5,14 +5,14 @@ block content
     section.main-page__publication.publication
       h1.publication__title Комментарии
       ul.publication__list
-        each article, index in articles
+        each comment in comments
           li.publication__list-item
             .publication__header
-              img.publication__list-image(src='/img/'+ [user.avatar] width='20' height='20' alt='Аватар пользователя')
-              b.publication__list-name #{user.name + ' ' +user.surname}
-              time.publication__item-time(datetime= article.createdAt) #{article.createdAt}
-            a.publication__item-text(href=`/+${article.id}`) #{article.title}
-            each comment in comments[index]
-              p.publication__text-strong #{comment.text}
-            button.publication__button.button.button--close-item(type='button')
-              span.visually-hidden Закрыть строку списка
+              img.publication__list-image(src=`/img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
+              b.publication__list-name #{comment.users.name} #{comment.users.surname}
+              time.publication__item-time(datetime=comment.createdAt) #{moment(comment.createdAt).format('DD.MM.YYYY, HH:MM')}
+            p.publication__item-text #{comment.text}
+            a.publication__text-strong(href=`/articles/${comment.articleId}`) #{getArticleTitle(articles, comment.articleId)}
+            form(method='POST' action=`/articles/${comment.articleId}/comments/delete/${comment.id}`)
+              button.publication__button.button.button--close-item(type='submit')
+                span.visually-hidden Закрыть строку списка

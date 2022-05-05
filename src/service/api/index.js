@@ -22,10 +22,10 @@ const app = new Router();
 
 defineModels(sequelize);
 
-(() => {
+(async () => {
   category(app, new CategoryService(sequelize));
   search(app, new SearchService(sequelize));
-  article(app, new ArticleService(sequelize));
+  article(app, new ArticleService(sequelize), new CommentService(sequelize));
   comment(app, new ArticleService(sequelize), new CommentService(sequelize));
   user(app, new UserService(sequelize));
 })();

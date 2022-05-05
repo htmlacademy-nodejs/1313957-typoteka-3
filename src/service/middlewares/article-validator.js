@@ -12,6 +12,7 @@ const ErrorArticleMessage = {
   ANNOUNCE_MIN: `Анонс публикации содержит меньше 30 символов.`,
   ANNOUNCE_MAX: `Анонс публикации не может содержать более 250 символов.`,
   FULL_TEXT: `Полный текст публикации не может быть более 1000 символов.`,
+  USER_ID: `Некорректный Id пользователя`,
 };
 
 const schema = Joi.object({
@@ -33,7 +34,10 @@ const schema = Joi.object({
   }),
   fullText: Joi.string().max(1000).required().messages({
     'fullText.max': ErrorArticleMessage.FULL_TEXT
-  })
+  }),
+  userId: Joi.number().integer().positive().required().messages({
+    'number.base': ErrorArticleMessage.USER_ID,
+  }),
 });
 
 module.exports = (req, res, next) => {

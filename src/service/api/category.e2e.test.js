@@ -176,7 +176,7 @@ describe(`API returns category list`, () => {
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/category`);
+      .get(`/categories`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));

@@ -4,8 +4,7 @@ const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/multer-upload`);
 const {prepareErrors} = require(`../../utils`);
-
-const ARTICLES_PER_PAGE = 8;
+const {DISPLAY_SETTINGS} = require(`../../constants`);
 
 const mainRouter = new Router();
 
@@ -16,20 +15,24 @@ mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
   page = +page;
 
-  const limit = ARTICLES_PER_PAGE;
+  const {limitArticles, limitAnnounce, limitComment} = DISPLAY_SETTINGS;
 
-  const offset = (page - 1) * ARTICLES_PER_PAGE;
+  const offset = (page - 1) * limitArticles;
   const [
     {count, articles},
-    categories
+    categories,
+    hotArticles,
+    lastComments
   ] = await Promise.all([
-    api.getArticles({limit, offset}),
-    api.getCategories(true) // опциональный аргумент
+    api.getArticles({offset, limit: limitArticles}),
+    api.getCategories({count: true}),
+    api.getHotArticles({limit: limitAnnounce}),
+    api.getLastComments({limit: limitComment}),
   ]);
 
-  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+  const totalPages = Math.ceil(count / limitArticles);
 
-  res.render(`main`, {articles, categories, page, totalPages, user});
+  res.render(`main`, {articles, hotArticles, lastComments, categories, page, totalPages, user});
 });
 
 mainRouter.get(`/register`, (req, res) => {
@@ -85,11 +88,19 @@ mainRouter.get(`/logout`, (req, res) => {
 mainRouter.get(`/search`, async (req, res) => {
   const {user} = req.session;
   const {query} = req.query;
+
+  if (!query) {
+    return res.render(`search-result`, {
+      results: [],
+      query: ``,
+    });
+  }
+
   try {
     const results = await api.search(query);
-    res.render(`search-result`, {user, results});
+    return res.render(`search-result`, {user, query, results});
   } catch (error) {
-    res.render(`search-empty`, {user, results: []});
+    return res.render(`search-empty`, {user, query, results: []});
   }
 });
 
