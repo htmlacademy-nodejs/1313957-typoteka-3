@@ -39,7 +39,16 @@ const DISPLAY_SETTINGS = {
   limitArticles: 8,
   limitAnnounce: 4,
   limitComment: 4,
+  maxAnnounceLength: 100,
+  maxCommentLength: 100,
 };
+
+const CATEGORY_NAME = {
+  minSymbols: 5,
+  maxSymbols: 30
+};
+
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
 module.exports = {
   DEFAULT_COMMAND,
@@ -51,4 +60,6 @@ module.exports = {
   Env,
   HttpMethod,
   DISPLAY_SETTINGS,
+  FILE_TYPES,
+  CATEGORY_NAME,
 };

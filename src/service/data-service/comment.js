@@ -4,6 +4,7 @@ const Alias = require(`../models/alias`);
 
 class CommentService {
   constructor(sequelize) {
+    this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._User = sequelize.models.User;
   }

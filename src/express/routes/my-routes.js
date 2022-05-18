@@ -16,13 +16,19 @@ myRouter.get(`/`, verificationRole, async (req, res) => {
 myRouter.get(`/comments`, verificationRole, async (req, res) => {
   const {user} = req.session;
   const articles = await api.getArticles({comments: true});
-  const comments = articles.flatMap((article) => article.comments);
+  const comments = articles.flatMap((article) => article.comments).sort(
+      (a, b) => {
+        let dateA = new Date(a.createdAt);
+        let dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      }
+  );
   res.render(`comments`, {user, articles, comments});
 });
 
 myRouter.get(`/categories`, verificationRole, async (req, res) => {
   const {user} = req.session;
-  const categories = await api.getCategories({count: true});
+  const categories = await api.getCategories();
   res.render(`all-categories`, {user, categories});
 });
 
@@ -33,42 +39,42 @@ myRouter.post(`/categories/add`, verificationRole, async (req, res) => {
     await api.createCategory(name);
     return res.redirect(`/my/categories`);
   } catch (errors) {
+    const {user} = req.session;
     const validationMessages = prepareErrors(errors);
     const categories = await api.getCategories();
-    return res.render(`all-categories`, {categories, validationMessages});
+
+    return res.render(`all-categories`, {user, categories, validationMessages});
   }
 });
 
 myRouter.post(`/categories/update/:id`, verificationRole, async (req, res) => {
   const {id} = req.params;
   const {name} = req.body;
-  const categories = await api.getCategories();
 
   try {
     await api.updateCategory(id, name);
     return res.redirect(`/my/categories`);
   } catch (errors) {
+    const {user} = req.session;
+    const categories = await api.getCategories();
     const validationMessages = prepareErrors(errors);
-    return res.render(`all-categories`, {
-      categories,
-      validationMessages,
-    });
+
+    return res.render(`all-categories`, {user, categories, validationMessages});
   }
 });
 
-myRouter.post(`/categories/delete/:id`, verificationRole, async (req, res) => {
+myRouter.get(`/categories/delete/:id`, verificationRole, async (req, res) => {
   const {id} = req.params;
-  const categories = await api.getCategories();
 
   try {
     await api.deleteCategory(id);
     return res.redirect(`/my/categories`);
   } catch (errors) {
+    const {user} = req.session;
+    const categories = await api.getCategories();
     const validationMessages = prepareErrors(errors);
-    return res.render(`admin/all-categories`, {
-      categories,
-      validationMessages,
-    });
+
+    return res.render(`all-categories`, {user, categories, validationMessages});
   }
 });
 

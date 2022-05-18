@@ -21,7 +21,8 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type='text' name='title' placeholder='Заголовок' required)
+                    input(type='text' name='title' placeholder='Заголовок'
+                      value = (article !== undefined && article.title !== '') ? article.title: '' required)
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly)
@@ -36,8 +37,10 @@ block content
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announcement' placeholder='Анонс публикации')
+                    textarea(rows='5' name='announcement' placeholder='Анонс публикации' required)
+                      | #{(article !== undefined && article.announce !== '') ? article.announce: ''}
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
+                      | #{(article !== undefined && article.fullText !== '') ? article.fullText: ''}
               +insertErrorMessages(validationMessages)

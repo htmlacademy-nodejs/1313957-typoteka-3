@@ -6,7 +6,7 @@ block content
       h1.category__title Категории
       .category__add-form
         form(action='/my/categories/add' method='POST')
-          input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
+          input#add-form-add-category(type='text' name='name' placeholder='Новая категория' required)
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить

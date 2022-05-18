@@ -53,18 +53,13 @@ class API {
     });
   }
 
-  // Комментарии
-  getLastComments({limit} = {}) {
-    return this._load(`/articles/last_comments`, {params: {limit}});
-  }
-
   // Категории
   getCategory({id}) {
     return this._load(`/categories/${id}`);
   }
 
-  getCategories({count} = {}) {
-    return this._load(`/categories`, {params: {count}});
+  getCategories({withCount} = {}) {
+    return this._load(`/categories`, {params: {withCount}});
   }
 
   createCategory(name) {
@@ -93,6 +88,10 @@ class API {
       method: HttpMethod.POST,
       data
     });
+  }
+
+  getLastComments({limit} = {}) {
+    return this._load(`/articles/last_comments`, {params: {limit}});
   }
 
   deleteComment({articleId, commentId}) {

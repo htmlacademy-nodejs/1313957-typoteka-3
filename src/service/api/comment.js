@@ -20,6 +20,14 @@ module.exports = (app, articleService, commentService) => {
 
   });
 
+  route.post(`/:articleId/comments`, [routeParamsValidator, articleExist(articleService), commentValidator], async (req, res) => {
+    const {articleId} = req.params;
+    const comment = await commentService.create(articleId, req.body);
+
+    return res.status(HttpCode.CREATED)
+      .json(comment);
+  });
+
   route.delete(`/:articleId/comments/:commentId`, [routeParamsValidator, articleExist(articleService)], async (req, res) => {
     const {commentId} = req.params;
     const deleted = await commentService.drop(commentId);
@@ -31,13 +39,5 @@ module.exports = (app, articleService, commentService) => {
 
     return res.status(HttpCode.OK)
       .json(deleted);
-  });
-
-  route.post(`/:articleId/comments`, [routeParamsValidator, articleExist(articleService), commentValidator], async (req, res) => {
-    const {articleId} = req.params;
-    const comment = await commentService.create(articleId, req.body);
-
-    return res.status(HttpCode.CREATED)
-      .json(comment);
   });
 };

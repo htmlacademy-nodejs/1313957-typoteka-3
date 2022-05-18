@@ -17,13 +17,13 @@ const shuffle = (someArray) => {
 
 const createRandomDate = () => {
 
-  const moment = require(`moment`);
+  const dayjs = require(`dayjs`);
   let start = new Date();
   let end = new Date();
 
   end.setMonth(start.getMonth() - 3);
   const createdDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  return moment(createdDate).format(`YYYY.MM.DD, hh:mm:ss`);
+  return dayjs(createdDate).format(`YYYY.MM.DD, hh:mm:ss`);
 };
 
 const prepareErrors = (errors) => {

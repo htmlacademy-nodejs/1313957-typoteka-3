@@ -15,7 +15,7 @@ mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
   page = +page;
 
-  const {limitArticles, limitAnnounce, limitComment} = DISPLAY_SETTINGS;
+  const {limitArticles, limitAnnounce, limitComment, maxAnnounceLength, maxCommentLength} = DISPLAY_SETTINGS;
 
   const offset = (page - 1) * limitArticles;
   const [
@@ -25,14 +25,13 @@ mainRouter.get(`/`, async (req, res) => {
     lastComments
   ] = await Promise.all([
     api.getArticles({offset, limit: limitArticles}),
-    api.getCategories({count: true}),
+    api.getCategories({withCount: true}),
     api.getHotArticles({limit: limitAnnounce}),
     api.getLastComments({limit: limitComment}),
   ]);
-
   const totalPages = Math.ceil(count / limitArticles);
 
-  res.render(`main`, {articles, hotArticles, lastComments, categories, page, totalPages, user});
+  res.render(`main`, {articles, hotArticles, maxAnnounceLength, lastComments, maxCommentLength, categories, page, totalPages, user});
 });
 
 mainRouter.get(`/register`, (req, res) => {
@@ -57,7 +56,7 @@ mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
   } catch (errors) {
     const {user} = req.session;
     const validationMessages = prepareErrors(errors);
-    res.render(`sign-up`, {user, validationMessages});
+    res.render(`sign-up`, {user, userData, validationMessages});
   }
 });
 

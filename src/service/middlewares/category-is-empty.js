@@ -1,13 +1,14 @@
 'use strict';
 const {HttpCode} = require(`../../constants`);
 
-module.exports = (service) => async (req, res, next) => {
+module.exports = (categoryService) => async (req, res, next) => {
   const {id} = req.params;
+  const {name} = req.body;
 
-  const categoriesWithArticles = await service.getArticlesByCategory(id);
+  const categoriesWithArticles = await categoryService.getArticlesByCategory(id);
 
   if (categoriesWithArticles.length !== 0) {
-    return res.status(HttpCode.BAD_REQUEST).send(`Category with id ${id} has articles`);
+    return res.status(HttpCode.BAD_REQUEST).send(`Категория "${name}" не удалена, имеет публикации`);
   }
 
   return next();

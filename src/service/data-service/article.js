@@ -5,9 +5,10 @@ const {Sequelize} = require(`sequelize`);
 
 class ArticleService {
   constructor(sequelize) {
+    this._User = sequelize.models.User;
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
-    this._User = sequelize.models.User;
+    this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
@@ -34,7 +35,14 @@ class ArticleService {
       order: [[`createdAt`, `DESC`]],
     });
 
-    return this._Article.findByPk(id, {include});
+    return this._Article.findByPk(
+        id,
+        {
+          include,
+          order: [
+            [{model: this._Comment, as: Alias.COMMENTS}, `createdAt`, `ASC`]
+          ]
+        });
   }
 
   async findAll(needComments) {
@@ -85,7 +93,8 @@ class ArticleService {
       include,
       order: [
         [`createdAt`, `DESC`],
-        [`id`, `DESC`]
+        [`id`, `DESC`],
+        [{model: this._Category, as: Alias.CATEGORIES}, `name`, `ASC`],
       ],
       distinct: true
     });

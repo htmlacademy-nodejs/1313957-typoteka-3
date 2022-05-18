@@ -22,6 +22,14 @@ module.exports = (app, articleService, commentService) => {
     res.status(HttpCode.OK).json(result);
   });
 
+  route.post(`/`, articleValidator, async (req, res) => {
+
+    const article = await articleService.create(req.body);
+
+    return res.status(HttpCode.CREATED)
+      .json(article);
+  });
+
   route.get(`/hot_articles`, async (req, res) => {
     const {limit} = req.query;
     const articles = await articleService.findHotArticles(limit);

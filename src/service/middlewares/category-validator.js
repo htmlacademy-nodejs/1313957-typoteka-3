@@ -1,25 +1,25 @@
 'use strict';
 
-const {HttpCode} = require(`../../constants`);
+const {HttpCode, CATEGORY_NAME} = require(`../../constants`);
 const Joi = require(`joi`);
-
-const MIN_SYMBOLS = 5;
-const MAX_SYMBOLS = 30;
+const {minSymbols, maxSymbols} = CATEGORY_NAME;
 
 const ErrorCategoryMessage = {
-  NAME_MIN: `Name is less than ${MIN_SYMBOLS} symbols`,
-  NAME_MAX: `Name is longer than ${MAX_SYMBOLS} symbols`,
-  CATEGORY_EXIST: `Category with such a name already exists`,
+  NAME_REQUIRED: `Название категории отсутствует`,
+  NAME_MIN: `Длина наименования не может быть менее ${minSymbols} символов`,
+  NAME_MAX: `Длина наименования не может быть более ${maxSymbols} символов`,
+  CATEGORY_EXIST: `Добавляемая категория уже существует`,
 };
 
 const schema = Joi.object({
-  name: Joi.string().min(MIN_SYMBOLS).max(MAX_SYMBOLS).required().messages({
+  name: Joi.string().min(minSymbols).max(maxSymbols).required().messages({
     'string.min': ErrorCategoryMessage.NAME_MIN,
     'string.max': ErrorCategoryMessage.NAME_MAX,
+    'string.empty': ErrorCategoryMessage.NAME_REQUIRED,
   }),
 });
 
-module.exports = (service) => async (req, res, next) => {
+module.exports = (categoryService) => async (req, res, next) => {
   const newCategory = req.body;
 
   const {error} = schema.validate(newCategory, {abortEarly: false});
@@ -27,15 +27,15 @@ module.exports = (service) => async (req, res, next) => {
   if (error) {
     return res
       .status(HttpCode.BAD_REQUEST)
-      .send(error.details.map((err) => err.message));
+      .send(error.details.map((err) => err.message).join(`\n`));
   }
 
-  const category = await service.findByName(newCategory.name);
+  const category = await categoryService.findByName(newCategory.name);
 
   if (category) {
     return res
       .status(HttpCode.BAD_REQUEST)
-      .send([ErrorCategoryMessage.CATEGORY_EXIST]);
+      .send(ErrorCategoryMessage.CATEGORY_EXIST);
   }
 
   return next();

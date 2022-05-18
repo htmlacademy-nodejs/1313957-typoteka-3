@@ -13,8 +13,8 @@ class CategoryService {
     return await this._Category.create({name});
   }
 
-  async findAll(isCountNeeded) {
-    if (isCountNeeded) {
+  async findAll(withCount) {
+    if (withCount) {
       const result = await this._Category.findAll({
         attributes: [
           `id`,
@@ -48,6 +48,10 @@ class CategoryService {
     }
 
     return await this._Category.findAll({
+      attributes: [
+        `id`,
+        `name`,
+      ],
       raw: true,
       order: [[`name`, `ASC`]],
     });

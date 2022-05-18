@@ -11,8 +11,8 @@ module.exports = (app, categoryService) => {
   app.use(`/categories`, route);
 
   route.get(`/`, async (req, res) => {
-    const {count} = req.query;
-    const categories = await categoryService.findAll(count);
+    const {withCount} = req.query;
+    const categories = await categoryService.findAll(withCount);
     res.status(HttpCode.OK)
       .json(categories);
   });
@@ -29,7 +29,7 @@ module.exports = (app, categoryService) => {
     return res.status(HttpCode.OK).json(category);
   });
 
-  route.put(`/:id`, categoryExistence(categoryService), categoryIsEmpty(categoryService), async (req, res) => {
+  route.put(`/:id`, categoryExistence(categoryService), async (req, res) => {
     const {id} = req.params;
     const {name} = req.body;
 
@@ -37,13 +37,13 @@ module.exports = (app, categoryService) => {
 
     if (!isUpdated) {
       return res
-        .sendStatus(HttpCode.BAD_REQUEST)
-        .send(`Category hasn't been updated`);
+        .status(HttpCode.BAD_REQUEST)
+        .send(`Категория "${name}" не была обновлена`);
     }
 
     return res
       .status(HttpCode.OK)
-      .send(`Category with id ${id} has been updated`);
+      .send(`Категория "${name}" была обновлена`);
   });
 
   route.delete(`/:id`, categoryExistence(categoryService), categoryIsEmpty(categoryService), async (req, res) => {

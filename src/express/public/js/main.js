@@ -327,3 +327,16 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 //     autosize(element);
 //   });
 // }
+
+// Превью загружаемого аватара пользователя
+const avatar = document.querySelector('.form__avatar.avatar');
+const avatarInput = document.querySelector('.form__image-loader input[type=file]');
+const previewAvatar = document.querySelector('.form__avatar img');
+
+if (avatarInput !== null) {
+  avatarInput.addEventListener('change', () => {
+    const file = avatarInput.files[0];
+    previewAvatar.src = URL.createObjectURL(file);
+    avatar.background = '';
+  });
+}
