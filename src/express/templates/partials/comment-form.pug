@@ -4,7 +4,7 @@
     .comments__avatar.avatar
       img(src=`/img/${user.avatar ? user.avatar : `/icons/smile.svg`}` alt='аватар пользователя')
     label
-      textarea(rows='1' name='comment' placeholder='Присоединиться к обсуждению' value = `${comment!== undefined ? comment : ``}`)
+      textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению' value = `${comment!== undefined ? comment : ``}`)
         | #{comment}
     button.comments__button.button.button--colored(type='submit') Опубликовать
     +insertErrorMessages(validationMessages)

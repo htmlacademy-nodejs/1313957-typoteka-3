@@ -30,9 +30,49 @@ const prepareErrors = (errors) => {
   return errors.response.data.split(`\n`);
 };
 
+const collectCategories = (body) => {
+  const result = [];
+
+  for (let key in body) {
+    if (body[key] === `on`) {
+      const categoryId = Number(key.split(`-`)[1]);
+      result.push(categoryId);
+    }
+  }
+
+  return result;
+};
+
+const getArticleData = (req) => {
+  const {body, file, session} = req;
+  const {user} = session;
+
+  const {
+    title,
+    announce,
+    description,
+    createdAt,
+  } = body;
+
+  const userId = user.id;
+  const categories = collectCategories(body);
+  const picture = file ? file.filename : (body.picture || ``);
+
+  return {
+    userId,
+    title,
+    announce,
+    description,
+    createdAt,
+    categories,
+    picture,
+  };
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   createRandomDate,
-  prepareErrors
+  prepareErrors,
+  getArticleData,
 };

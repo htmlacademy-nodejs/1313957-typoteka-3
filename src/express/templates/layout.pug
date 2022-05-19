@@ -68,9 +68,9 @@ body.wrapper
         if start > 1
           li
             a.pagination__button.button.button--backwards.button--disabled(herf=`${prefix}page=${page - 1}`) Назад
-          while i++ < end
-            li.pagination__item(class={'pagination__item--active': i === page})
-              a(href=`${prefix}page=${i}`)= i
+        while i++ < end
+          li.pagination__item(class={'pagination__item--active': i === page})
+            a(href=`${prefix}page=${i}`)= i
         if end < totalPages
           li
             a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}`) Вперед

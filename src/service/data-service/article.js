@@ -131,11 +131,19 @@ class ArticleService {
   }
 
   async update(id, offer) {
-    const [affectedRows] = await this._Article.update(offer, {
-      where: {id}
-    });
 
-    return !!affectedRows;
+    const [[affectedRows], article] = await Promise.all([
+      this._Article.update(offer, {where: {id}}),
+      this._Article.findByPk(id)
+    ]);
+
+    const updated = !!affectedRows;
+
+    if (updated) {
+      await article.setCategories(offer.categories);
+    }
+
+    return updated;
   }
 
   async drop(id) {
