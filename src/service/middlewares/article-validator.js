@@ -24,6 +24,9 @@ const schema = Joi.object({
   picture: Joi.string().pattern(/\.(?:jpg|png)$/i).allow(``).messages({
     'picture.string': ErrorArticleMessage.PICTURE
   }),
+  createdAt: Joi.string().isoDate().required().messages({
+    'string.empty': ErrorArticleMessage.DATE
+  }),
   categories: Joi.array().items(
       Joi.number().integer().positive().messages({
         'number.base': ErrorArticleMessage.CATEGORIES

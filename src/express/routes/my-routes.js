@@ -3,17 +3,17 @@
 const {Router} = require(`express`);
 const verificationRole = require(`../middlewares/verification-role`);
 const api = require(`../api`).getAPI();
-const {prepareErrors} = require(`../../utils`);
+const {prepareErrors, asyncHandler} = require(`../../utils`);
 
 const myRouter = new Router();
 
-myRouter.get(`/`, verificationRole, async (req, res) => {
+myRouter.get(`/`, verificationRole, asyncHandler(async (req, res) => {
   const {user} = req.session;
   const articles = await api.getArticles();
   res.render(`articles/my-articles`, {user, articles});
-});
+}));
 
-myRouter.get(`/comments`, verificationRole, async (req, res) => {
+myRouter.get(`/comments`, verificationRole, asyncHandler(async (req, res) => {
   const {user} = req.session;
   const articles = await api.getArticles({comments: true});
   const comments = articles.flatMap((article) => article.comments).sort(
@@ -24,15 +24,15 @@ myRouter.get(`/comments`, verificationRole, async (req, res) => {
       }
   );
   res.render(`comments`, {user, articles, comments});
-});
+}));
 
-myRouter.get(`/categories`, verificationRole, async (req, res) => {
+myRouter.get(`/categories`, verificationRole, asyncHandler(async (req, res) => {
   const {user} = req.session;
   const categories = await api.getCategories();
   res.render(`all-categories`, {user, categories});
-});
+}));
 
-myRouter.post(`/categories/add`, verificationRole, async (req, res) => {
+myRouter.post(`/categories/add`, verificationRole, asyncHandler(async (req, res) => {
   const {name} = req.body;
 
   try {
@@ -45,9 +45,9 @@ myRouter.post(`/categories/add`, verificationRole, async (req, res) => {
 
     return res.render(`all-categories`, {user, categories, validationMessages});
   }
-});
+}));
 
-myRouter.post(`/categories/update/:id`, verificationRole, async (req, res) => {
+myRouter.post(`/categories/update/:id`, verificationRole, asyncHandler(async (req, res) => {
   const {id} = req.params;
   const {name} = req.body;
 
@@ -61,9 +61,9 @@ myRouter.post(`/categories/update/:id`, verificationRole, async (req, res) => {
 
     return res.render(`all-categories`, {user, categories, validationMessages});
   }
-});
+}));
 
-myRouter.get(`/categories/delete/:id`, verificationRole, async (req, res) => {
+myRouter.get(`/categories/delete/:id`, verificationRole, asyncHandler(async (req, res) => {
   const {id} = req.params;
 
   try {
@@ -76,6 +76,6 @@ myRouter.get(`/categories/delete/:id`, verificationRole, async (req, res) => {
 
     return res.render(`all-categories`, {user, categories, validationMessages});
   }
-});
+}));
 
 module.exports = myRouter;

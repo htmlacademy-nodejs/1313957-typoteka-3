@@ -50,7 +50,7 @@ const getArticleData = (req) => {
   const {
     title,
     announce,
-    description,
+    fullText,
     createdAt,
   } = body;
 
@@ -62,10 +62,20 @@ const getArticleData = (req) => {
     userId,
     title,
     announce,
-    description,
+    fullText,
     createdAt,
     categories,
     picture,
+  };
+};
+
+const asyncHandler = (cb) => {
+  return async function (req, res, next) {
+    try {
+      return await cb(req, res);
+    } catch (err) {
+      return next(err);
+    }
   };
 };
 
@@ -75,4 +85,5 @@ module.exports = {
   createRandomDate,
   prepareErrors,
   getArticleData,
+  asyncHandler,
 };

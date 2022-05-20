@@ -28,14 +28,16 @@ body.wrapper
 
     const isChecked = (article, {id}) => article.categories && article.categories.some(item => item === id || item.id === id);
 
-    const formatDate = (date) => dayjs(date).format('DD.MM.YYYY, HH:mm');
+    const formatDate = (date) => dayjs(date).format('DD.MM.YYYY');
+
+    const formatDateComment = (date) => dayjs(date).format('DD.MM.YYYY, HH:mm');
 
   mixin insertArticleImage(article)
-    img.preview__background-image(src=`/img/${article.picture ? article.picture : 'blank.png'}` width="460" height="240" alt=article.title)
+    img.preview__background-image(src=`/img/${article.picture ? article.picture : 'blank.png'}` width="100%" heigth="auto" alt=article.title)
 
   mixin insertSearchResult(article)
     .search__result
-      time.search__date(datetime=article.createdAt) #{dayjs(article.createdAt).format('DD.MM.YYYY')}
+      time.search__date(datetime=article.createdAt) #{formatDate(article.createdAt)}
       a.search__link(href=`/articles/${article.id}`) #{article.title}
 
   mixin insertCategory(category)
@@ -64,16 +66,17 @@ body.wrapper
       let i = start - 1;
 
     .preview__toggle-wrapper
-      ul.preview__pagination.pagination
-        if start > 1
-          li
-            a.pagination__button.button.button--backwards.button--disabled(herf=`${prefix}page=${page - 1}`) Назад
-        while i++ < end
-          li.pagination__item(class={'pagination__item--active': i === page})
-            a(href=`${prefix}page=${i}`)= i
-        if end < totalPages
-          li
-            a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}`) Вперед
+      if totalPages > 1
+        ul.preview__pagination.pagination
+          if start > 1
+            li
+              a.pagination__button.button.button--backwards.button--disabled(herf=`${prefix}page=${page - 1}`) Назад
+          while i++ < end
+            li.pagination__item(class={'pagination__item--active': i === page})
+              a(href=`${prefix}page=${i}`)= i
+          if end < totalPages
+            li
+              a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}`) Вперед
 
   mixin insertErrorMessages(messages)
     if messages

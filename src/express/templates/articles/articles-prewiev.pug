@@ -7,7 +7,7 @@ section.main-page__list.preview
           each category in article.categories
             li.preview__breadcrumbs-item
               a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`) #{category.name}
-        .preview__background
+        .preview__background(width="460" height="240")
           +insertArticleImage(article)
         time.preview__time(datetime=`${article.createdAt}`) #{formatDate(article.createdAt)}
         h3.preview__name

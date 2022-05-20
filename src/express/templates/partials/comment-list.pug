@@ -7,5 +7,5 @@ ul.comments__list
     .comments__text
       .comments__head
         p #{comment.users.name} #{comment.users.surname} •
-        time.comments__date(datetime=comment.createdAt) #{formatDate(comment.createdAt)}
+        time.comments__date(datetime=comment.createdAt) #{formatDateComment(comment.createdAt)}
       p.comments__message #{comment.text}

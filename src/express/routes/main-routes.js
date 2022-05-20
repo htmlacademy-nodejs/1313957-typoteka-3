@@ -3,12 +3,12 @@
 const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/multer-upload`);
-const {prepareErrors} = require(`../../utils`);
+const {prepareErrors, asyncHandler} = require(`../../utils`);
 const {DISPLAY_SETTINGS} = require(`../../constants`);
 
 const mainRouter = new Router();
 
-mainRouter.get(`/`, async (req, res) => {
+mainRouter.get(`/`, asyncHandler(async (req, res) => {
 
   const {user} = req.session;
 
@@ -32,14 +32,14 @@ mainRouter.get(`/`, async (req, res) => {
   const totalPages = Math.ceil(count / limitArticles);
 
   res.render(`main`, {articles, hotArticles, maxAnnounceLength, lastComments, maxCommentLength, categories, page, totalPages, user});
-});
+}));
 
 mainRouter.get(`/register`, (req, res) => {
   const {user} = req.session;
   res.render(`sign-up`, {user});
 });
 
-mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
+mainRouter.post(`/register`, upload.single(`upload`), asyncHandler(async (req, res) => {
   const {body, file} = req;
   const userData = {
     avatar: file ? file.filename : ``,
@@ -58,14 +58,14 @@ mainRouter.post(`/register`, upload.single(`upload`), async (req, res) => {
     const validationMessages = prepareErrors(errors);
     res.render(`sign-up`, {user, userData, validationMessages});
   }
-});
+}));
 
 mainRouter.get(`/login`, (req, res) => {
   const {user} = req.session;
   res.render(`login`, {user});
 });
 
-mainRouter.post(`/login`, async (req, res) => {
+mainRouter.post(`/login`, asyncHandler(async (req, res) => {
   try {
     const user = await api.auth(req.body[`email`], req.body[`password`]);
     req.session.user = user;
@@ -78,13 +78,13 @@ mainRouter.post(`/login`, async (req, res) => {
     const {email} = req.body;
     res.render(`login`, {user, email, validationMessages});
   }
-});
+}));
 
 mainRouter.get(`/logout`, (req, res) => {
   req.session.destroy(() => res.redirect(`/`));
 });
 
-mainRouter.get(`/search`, async (req, res) => {
+mainRouter.get(`/search`, asyncHandler(async (req, res) => {
   const {user} = req.session;
   const {query} = req.query;
 
@@ -101,6 +101,6 @@ mainRouter.get(`/search`, async (req, res) => {
   } catch (error) {
     return res.render(`search-empty`, {user, query, results: []});
   }
-});
+}));
 
 module.exports = mainRouter;
