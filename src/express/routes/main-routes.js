@@ -2,9 +2,9 @@
 
 const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
+const {DISPLAY_SETTINGS} = require(`../../constants`);
 const upload = require(`../middlewares/multer-upload`);
 const {prepareErrors, asyncHandler} = require(`../../utils`);
-const {DISPLAY_SETTINGS} = require(`../../constants`);
 
 const mainRouter = new Router();
 

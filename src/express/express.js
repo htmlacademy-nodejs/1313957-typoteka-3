@@ -3,6 +3,8 @@
 const express = require(`express`);
 const session = require(`express-session`);
 const path = require(`path`);
+const http = require(`http`);
+const socket = require(`./lib/socket`);
 
 const myRoutes = require(`./routes/my-routes`);
 const mainRoutes = require(`./routes/main-routes`);
@@ -21,6 +23,9 @@ if (!SESSION_SECRET) {
 }
 
 const app = express();
+const server = http.createServer(app);
+const io = socket(server);
+app.locals.socketio = io;
 app.locals.dayjs = require(`dayjs`);
 
 const mySessionStore = new SequelizeStore({
@@ -54,4 +59,4 @@ app.use((err, _req, res, _next) => res.status(HttpCode.INTERNAL_SERVER_ERROR).re
 app.set(`views`, path.resolve(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 
-app.listen(process.env.PORT || DEFAULT_PORT);
+server.listen(process.env.PORT || DEFAULT_PORT);

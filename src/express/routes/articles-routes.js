@@ -3,12 +3,12 @@
 const {Router} = require(`express`);
 const csrf = require(`csurf`);
 const api = require(`../api`).getAPI();
-const {prepareErrors, getArticleData, asyncHandler} = require(`../../utils`);
 const upload = require(`../middlewares/multer-upload`);
 const auth = require(`../middlewares/auth`);
 const verificationRole = require(`../middlewares/verification-role`);
 const {DISPLAY_SETTINGS} = require(`../../constants`);
-
+const {limitArticles, limitAnnounce, limitComment} = DISPLAY_SETTINGS;
+const {prepareErrors, getArticleData, asyncHandler} = require(`../../utils`);
 const articlesRouter = new Router();
 
 const csrfProtection = csrf();
@@ -35,7 +35,7 @@ articlesRouter.get(`/add`, verificationRole, csrfProtection, asyncHandler(async 
 articlesRouter.post(`/add`, auth, upload.single(`upload`), csrfProtection, asyncHandler(async (req, res) => {
   const {user} = req.session;
   const articleData = getArticleData(req);
-  console.log(articleData.createdAt);
+
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);
@@ -71,7 +71,6 @@ articlesRouter.get(`/category/:id`, asyncHandler(async (req, res) => {
   let {page = 1} = req.query;
   page = +page;
 
-  const {limitArticles} = DISPLAY_SETTINGS;
   const offset = (page - 1) * limitArticles;
 
   const [
@@ -125,7 +124,10 @@ articlesRouter.post(`/:id/comments`, auth, csrfProtection, asyncHandler(async (r
   const {text} = req.body;
 
   try {
-    await api.createComment(id, {userId: user.id, text});
+    const {newComment, hotArticles} = await api.createComment(id, {userId: user.id, text}, limitComment);
+    const io = req.app.locals.socketio;
+    io.emit(`comment:create`, newComment, hotArticles);
+
     res.redirect(`/articles/${id}`);
   } catch (errors) {
     const validationMessages = prepareErrors(errors);
@@ -156,7 +158,10 @@ articlesRouter.get(`/:id/comments/delete/:commentId`, auth, csrfProtection, asyn
   const {id: articleId, commentId} = req.params;
 
   try {
-    await api.deleteComment({articleId, commentId});
+    const {lastComments, hotArticles} = await api.deleteComment({articleId, commentId, limitComment, limitAnnounce});
+    const io = req.app.locals.socketio;
+    io.emit(`comment:delete`, lastComments, hotArticles);
+
     return res.redirect(`/my/comments`);
   } catch (errors) {
     return res.redirect(`/my/comments`);

@@ -83,10 +83,11 @@ class API {
   }
 
   // Комментарии
-  createComment(id, data) {
+  createComment(id, data, limit) {
     return this._load(`/articles/${id}/comments`, {
       method: HttpMethod.POST,
-      data
+      data,
+      params: {limit}
     });
   }
 
@@ -94,9 +95,10 @@ class API {
     return this._load(`/articles/last_comments`, {params: {limit}});
   }
 
-  deleteComment({articleId, commentId}) {
+  deleteComment({articleId, commentId, limitComment, limitAnnounce}) {
     return this._load(`/articles/${articleId}/comments/${commentId}`, {
       method: HttpMethod.DELETE,
+      params: {limitComment, limitAnnounce}
     });
   }
 

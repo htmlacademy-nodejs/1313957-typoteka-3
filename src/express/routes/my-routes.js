@@ -1,8 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const verificationRole = require(`../middlewares/verification-role`);
 const api = require(`../api`).getAPI();
+const verificationRole = require(`../middlewares/verification-role`);
 const {prepareErrors, asyncHandler} = require(`../../utils`);
 
 const myRouter = new Router();

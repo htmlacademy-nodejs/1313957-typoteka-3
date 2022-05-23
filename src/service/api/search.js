@@ -2,12 +2,14 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 
+const {asyncHandler} = require(`../../utils`);
+
 module.exports = (app, searchService) => {
   const route = new Router();
 
   app.use(`/search`, route);
 
-  route.get(`/`, async (req, res) => {
+  route.get(`/`, asyncHandler(async (req, res) => {
     const {query = ``} = req.query;
     if (!query) {
       res.status(HttpCode.BAD_REQUEST)
@@ -20,5 +22,5 @@ module.exports = (app, searchService) => {
 
     res.status(searchStatus)
       .json(searchResults);
-  });
+  }));
 };

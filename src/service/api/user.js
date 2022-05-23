@@ -4,8 +4,10 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 
 const userValidator = require(`../middlewares/user-validator`);
-const asyncHandler = require(`../middlewares/async-handler`);
+// const asyncHandler = require(`../middlewares/async-handler`);
 const passwordUtils = require(`../lib/password`);
+
+const {asyncHandler} = require(`../../utils`);
 
 const route = new Router();
 

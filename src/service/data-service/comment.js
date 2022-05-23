@@ -16,6 +16,26 @@ class CommentService {
     });
   }
 
+  async findOne(id) {
+    return this._Comment.findOne({
+      where: id,
+      attributes: [`id`, `text`, `createdAt`],
+      include: [
+        {
+          model: this._User,
+          as: Alias.USERS,
+          attributes: [`avatar`, `name`, `surname`],
+        },
+        {
+          model: this._Article,
+          as: Alias.ARTICLES,
+          attributes: [`title`, `id`]
+        }
+      ],
+      raw: true
+    });
+  }
+
   async findAll(articleId) {
     return this._Comment.findAll({
       where: {articleId},
