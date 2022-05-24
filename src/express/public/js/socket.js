@@ -11,17 +11,17 @@
     const lastCommentElement = lastCommentTemplate.cloneNode(true).content;
 
     const avatar = lastCommentElement.querySelector(`.last__list-image`)
-    if (comment['users.avatar']) {
-      avatar.src = `img/${comment['users.avatar']}`;
+    if (comment['users.avatar'] || comment.users.avatar) {
+      avatar.src = `img/${comment['users.avatar'] || comment.users.avatar}`;
     } else {
       avatar.src = `img/icons/smile.svg`
     }
 
     lastCommentElement.querySelector(`.last__list-name`)
-      .innerText = `${comment['users.name']} ${comment['users.surname']}`;
+      .innerText = `${comment['users.name'] || comment.users.name} ${comment['users.surname'] || comment.users.surname}`;
 
     const link = lastCommentElement.querySelector(`.last__list-link`);
-    link.href = `/articles/${comment['articles.id']}`;
+    link.href = `/articles/${comment['articles.id'] || comment.articles.id}`;
     truncateText(link, comment.text, MAX_COMMENT_LENGTH);
 
     return lastCommentElement;
@@ -85,7 +85,7 @@
   })
 
   socket.addEventListener('comment:delete', (comments, populars) => {
-    updateDeleteComments(comments)
+    updateDeleteComments(comments);
     updateHotElements(populars);
   })
 })();

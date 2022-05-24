@@ -45,20 +45,24 @@ class CommentService {
 
   async findLastComments(limit) {
     const comments = await this._Comment.findAll({
-      attributes: [`articleId`, `text`, `createdAt`],
+      attributes: [`text`, `createdAt`],
       include: [
         {
           model: this._User,
           as: Alias.USERS,
           attributes: [`avatar`, `name`, `surname`],
         },
+        {
+          model: this._Article,
+          as: Alias.ARTICLES,
+          attributes: [`id`]
+        }
       ],
       order: [[`createdAt`, `DESC`]],
       limit,
-      subQuery: false,
     });
 
-    return comments.map((article) => article.get());
+    return comments.map((comment) => comment.get());
   }
 
   async drop(id) {
