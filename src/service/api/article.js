@@ -45,7 +45,7 @@ module.exports = (app, articleService, commentService) => {
 
   route.get(`/last_comments`, asyncHandler(async (req, res) => {
     const {limit} = req.query;
-    const comments = await commentService.findLastComments(limit);
+    const comments = await commentService.findComments({limit});
 
     if (!comments) {
       return res.send([]);

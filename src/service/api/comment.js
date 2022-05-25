@@ -32,7 +32,7 @@ module.exports = (app, articleService, commentService) => {
         const comment = await commentService.create(articleId, req.body);
 
         const [newComment, hotArticles] = await Promise.all([
-          commentService.findOne(comment.id),
+          commentService.findComments({id: comment.id}),
           articleService.findHotArticles(limit)
         ]);
 
@@ -56,7 +56,7 @@ module.exports = (app, articleService, commentService) => {
         }
 
         const [lastComments, hotArticles] = await Promise.all([
-          commentService.findLastComments(limitComment),
+          commentService.findComments({limit: limitComment}),
           articleService.findHotArticles(limitAnnounce)
         ]);
 
