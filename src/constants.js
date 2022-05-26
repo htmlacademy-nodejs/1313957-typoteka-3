@@ -50,6 +50,12 @@ const CATEGORY_NAME = {
 
 const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
+const ARTICLE_MODEL_DEFINE = {
+  titleLength: 250,
+  pictureLength: 50,
+  announceLength: 250,
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
@@ -62,4 +68,5 @@ module.exports = {
   DISPLAY_SETTINGS,
   FILE_TYPES,
   CATEGORY_NAME,
+  ARTICLE_MODEL_DEFINE,
 };

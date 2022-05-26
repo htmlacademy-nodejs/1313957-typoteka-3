@@ -1,7 +1,8 @@
 'use strict';
 
 const {DataTypes, Model} = require(`sequelize`);
-
+const {ARTICLE_MODEL_DEFINE} = require(`../../constants.js`);
+const {titleLength, pictureLength, announceLength} = ARTICLE_MODEL_DEFINE;
 class Article extends Model {
 
 }
@@ -9,14 +10,14 @@ class Article extends Model {
 const define = (sequelize) => Article.init({
   title: {
     // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(250),
+    type: DataTypes.STRING(titleLength),
     allowNull: false
   },
   // eslint-disable-next-line new-cap
-  picture: DataTypes.STRING(50),
+  picture: DataTypes.STRING(pictureLength),
   announce: {
     // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(250),
+    type: DataTypes.STRING(announceLength),
     allowNull: false
   },
   fullText: {
